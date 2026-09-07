@@ -29,7 +29,7 @@ export class AuthService implements OnDestroy {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private expirationTimer: any = null;
-  private readonly TOKEN_DURATION_MS = 2 * 60 * 1000; // 2 minutos
+  private readonly TOKEN_DURATION_MS = 20 * 60 * 1000; // 2 minutos
 
   constructor(
     private http: HttpClient,
