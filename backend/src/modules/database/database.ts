@@ -44,6 +44,17 @@ export async function initDatabase(): Promise<void> {
     );
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS categorias (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL UNIQUE,
+      type VARCHAR(20) NOT NULL DEFAULT 'expense',
+      color VARCHAR(20) NOT NULL DEFAULT '#38BDF8',
+      icon VARCHAR(10) NOT NULL DEFAULT '📁',
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+  `);
+
   const defaultEmail = "Benjamin@gmail.com";
   const existing = await pool.query("SELECT id FROM usuarios WHERE email = $1", [defaultEmail]);
 

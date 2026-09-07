@@ -1,0 +1,228 @@
+<div class="report-page">
+  <div class="report-header">
+    <div class="header-left">
+      <h1 class="view-title">Reportes</h1>
+    </div>
+    <div class="header-right">
+      <div class="select-pill">
+        <span>Período</span>
+        <select [(ngModel)]="selectedMonthIdx" (ngModelChange)="onPeriodChange()">
+          <option [ngValue]="0">Anual</option>
+          <option *ngFor="let m of monthNames; let i = index" [ngValue]="i + 1">{{ m }}</option>
+        </select>
+        <span>/</span>
+        <select [(ngModel)]="selectedYear" (ngModelChange)="onPeriodChange()">
+          <option *ngFor="let y of yearOptions" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+      <div class="user-profile">
+        <span>Hola, <strong>{{ userName }}</strong></span>
+        <div class="avatar">{{ userInitials }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="left-column">
+      <div class="month-tabs" *ngIf="report && !report.month">
+        <button *ngFor="let m of shortMonthNames; let i = index" class="month-tab"
+          [class.active]="selectedMonthIdx === i + 1"
+          (click)="selectMonth(i + 1)">
+          {{ m }}
+        </button>
+        <button class="month-tab month-all" [class.active]="selectedMonthIdx === 0"
+          (click)="selectMonth(0)">
+          Todo
+        </button>
+      </div>
+
+      <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <span>Generando reporte...</span>
+      </div>
+
+      <ng-container *ngIf="!loading && report">
+        <div class="summary-grid">
+          <div class="summary-card income">
+            <span class="summary-label">Ingresos</span>
+            <span class="summary-value">{{ formatCurrency(report.summary.totalIncome) }}</span>
+            <span class="summary-sub">{{ report.summary.incomeCount }} transacciones</span>
+          </div>
+          <div class="summary-card expense">
+            <span class="summary-label">Gastos</span>
+            <span class="summary-value">{{ formatCurrency(report.summary.totalExpenses) }}</span>
+            <span class="summary-sub">{{ report.summary.expenseCount }} transacciones</span>
+          </div>
+          <div class="summary-card balance" [class.negative]="report.summary.balance < 0">
+            <span class="summary-label">Balance</span>
+            <span class="summary-value">{{ formatCurrency(report.summary.balance) }}</span>
+            <span class="summary-sub">{{ report.summary.transactionCount }} transacciones totales</span>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-header">
+            <h3>Ingresos vs Gastos</h3>
+            <span class="chart-sub">{{ periodLabel }}</span>
+          </div>
+
+          <div class="bar-chart">
+            <div class="chart-y-labels">
+              <span *ngFor="let lbl of barYLabels">{{ lbl }}</span>
+            </div>
+            <div class="chart-grid">
+              <div class="grid-line" *ngFor="let lbl of barYLabels"></div>
+              <div class="bars-area">
+                <div class="bar-group" *ngFor="let lbl of barLabels; let i = index">
+                  <div class="bar-pair">
+                    <div class="bar bar-income" [style.height.px]="(barIncome[i] / barNiceMax) * 140"
+                      [title]="lbl + ': ' + formatCurrency(barIncome[i])"></div>
+                    <div class="bar bar-expense" [style.height.px]="(barExpense[i] / barNiceMax) * 140"
+                      [title]="lbl + ': ' + formatCurrency(barExpense[i])"></div>
+                  </div>
+                  <span class="bar-label">{{ lbl }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-legend">
+            <span class="legend-item"><span class="dot income-dot"></span> Ingresos</span>
+            <span class="legend-item"><span class="dot expense-dot"></span> Gastos</span>
+          </div>
+        </div>
+
+        <div class="card table-card" *ngIf="!report.month">
+          <div class="card-title-row">
+            <h3>Detalle mensual</h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Mes</th>
+                  <th class="text-right">Ingresos</th>
+                  <th class="text-right">Gastos</th>
+                  <th class="text-right">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of report.monthly">
+                  <td>{{ m.label }}</td>
+                  <td class="text-right cell-positive">{{ formatCurrency(m.income) }}</td>
+                  <td class="text-right cell-negative">{{ formatCurrency(m.expense) }}</td>
+                  <td class="text-right" [class.cell-positive]="m.balance >= 0"
+                    [class.cell-negative]="m.balance < 0">{{ formatCurrency(m.balance) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="right-column">
+      <ng-container *ngIf="!loading && report">
+        <div class="card donut-card">
+          <div class="card-title-row">
+            <h3>Gastos por categoría</h3>
+          </div>
+
+          <div class="donut-chart-wrapper" *ngIf="donutCategories.length > 0">
+            <svg viewBox="0 0 200 200" class="donut-svg">
+              <defs>
+                <filter id="glowDonutRep" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="20" />
+              <circle *ngFor="let seg of donutSegments" cx="100" cy="100" r="80" fill="none"
+                [attr.stroke]="seg.color" stroke-width="20"
+                [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
+                transform="rotate(-90 100 100)" class="donut-segment donut-segment-exp" [style.animation-delay]="seg.delay" />
+              <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">
+                {{ formatCurrency(donutTotal) }}
+              </text>
+              <text x="100" y="115" text-anchor="middle" fill="#8B9BB4" font-size="10">Gastos</text>
+            </svg>
+          </div>
+          <div class="chart-legend" *ngIf="donutCategories.length > 0">
+            <div class="legend-item" *ngFor="let cat of donutCategories">
+              <span class="dot" [style.background]="cat.color"></span>
+              <span class="legend-text" [title]="cat.name">{{ cat.name }}</span>
+              <span class="legend-percent">{{ cat.percent }}%</span>
+            </div>
+          </div>
+          <div class="chart-legend" *ngIf="donutCategories.length === 0">
+            <div class="legend-item empty-legend">Sin gastos registrados</div>
+          </div>
+        </div>
+
+        <div class="card donut-card">
+          <div class="card-title-row">
+            <h3>Ingresos por fuente</h3>
+          </div>
+
+          <div class="donut-chart-wrapper" *ngIf="incomeDonutCategories.length > 0">
+            <svg viewBox="0 0 200 200" class="donut-svg">
+              <defs>
+                <filter id="glowDonutIncRep" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="20" />
+              <circle *ngFor="let seg of incomeDonutSegments" cx="100" cy="100" r="80" fill="none"
+                [attr.stroke]="seg.color" stroke-width="20"
+                [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
+                transform="rotate(-90 100 100)" class="donut-segment donut-segment-inc" [style.animation-delay]="seg.delay" />
+              <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">
+                {{ formatCurrency(incomeDonutTotal) }}
+              </text>
+              <text x="100" y="115" text-anchor="middle" fill="#8B9BB4" font-size="10">Ingresos</text>
+            </svg>
+          </div>
+          <div class="chart-legend" *ngIf="incomeDonutCategories.length > 0">
+            <div class="legend-item" *ngFor="let cat of incomeDonutCategories">
+              <span class="dot" [style.background]="cat.color"></span>
+              <span class="legend-text" [title]="cat.name">{{ cat.name }}</span>
+              <span class="legend-percent">{{ cat.percent }}%</span>
+            </div>
+          </div>
+          <div class="chart-legend" *ngIf="incomeDonutCategories.length === 0">
+            <div class="legend-item empty-legend">Sin ingresos registrados</div>
+          </div>
+        </div>
+
+        <div class="card list-card">
+          <div class="card-title-row">
+            <h3>{{ report.month ? monthNames[report.month - 1] : 'Año' }} {{ report.year }}</h3>
+          </div>
+          <div class="mini-stat" *ngIf="report.summary.incomeCount > 0 || report.summary.expenseCount > 0">
+            <span class="mini-label">Categoría con mayor gasto</span>
+            <span class="mini-value" *ngIf="report.expenseByCategory.length > 0">
+              {{ report.expenseByCategory[0].name }}
+            </span>
+            <span class="mini-value" *ngIf="report.expenseByCategory.length === 0">-</span>
+          </div>
+          <div class="mini-stat" *ngIf="report.summary.incomeCount > 0 || report.summary.expenseCount > 0">
+            <span class="mini-label">Fuente principal de ingreso</span>
+            <span class="mini-value" *ngIf="report.incomeBySource.length > 0">
+              {{ report.incomeBySource[0].name }}
+            </span>
+            <span class="mini-value" *ngIf="report.incomeBySource.length === 0">-</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
