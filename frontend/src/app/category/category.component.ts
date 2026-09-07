@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { SettingsService } from "../services/settings.service";
 import { CategoryService } from "./services/category.service";
 import {
   Category,
@@ -43,7 +44,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private settingsService: SettingsService
   ) {}
 
   ngOnInit(): void {
@@ -189,6 +191,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   typeLabel(type: string): string {
-    return type === "expense" ? "Gasto" : "Ingreso";
+    return type === "expense"
+      ? this.t("category.typeExpense")
+      : this.t("category.typeIncome");
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 }

@@ -1,11 +1,11 @@
 <div class="income-page">
   <div class="income-header">
     <div class="header-left">
-      <h1 class="view-title">Ingresos</h1>
+      <h1 class="view-title">{{ t('income.title') }}</h1>
     </div>
     <div class="header-right">
       <div class="select-pill">
-        <span>Período</span>
+        <span>{{ t('income.period') }}</span>
         <select [(ngModel)]="selectedPeriodMonthIdx" (ngModelChange)="onPeriodChange()">
           <option *ngFor="let m of monthNames; let i = index" [ngValue]="i">{{ m }}</option>
         </select>
@@ -15,7 +15,7 @@
         </select>
       </div>
       <div class="user-profile">
-        <span>Hola, <strong>{{ userName }}</strong></span>
+        <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
         <div class="avatar">{{ userInitials }}</div>
       </div>
     </div>
@@ -24,15 +24,15 @@
   <div class="content-grid">
     <div class="left-column">
       <button class="btn-new-income" (click)="toggleForm()">
-        <span class="btn-plus">+</span> Nuevo Ingreso
+        <span class="btn-plus">+</span> {{ t('income.newIncome') }}
       </button>
 
       <div class="card total-card neon-box">
-        <span class="card-label">Total de ingresos del mes</span>
+        <span class="card-label">{{ t('income.totalMonth') }}</span>
         <div class="total-amount">{{ formatCurrency(totalIncome) }}</div>
         <div class="trend-badge" [class.trend-positive]="trendPercent >= 0" [class.trend-negative]="trendPercent < 0">
           <span class="trend-arrow">{{ trendPercent >= 0 ? '&#8593;' : '&#8595;' }}</span>
-          {{ trendPercent >= 0 ? '+' : '' }}{{ trendPercent }}% del mes anterior
+          {{ trendPercent >= 0 ? '+' : '' }}{{ trendPercent }}% {{ t('income.vsPrevMonth') }}
         </div>
       </div>
 
@@ -45,24 +45,24 @@
       </div>
 
       <div class="card history-card">
-        <h3>Historial de Ingresos</h3>
+        <h3>{{ t('income.history') }}</h3>
 
         <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
 
         <div class="loading-state" *ngIf="loading">
           <div class="spinner"></div>
-          <span>Cargando ingresos...</span>
+          <span>{{ t('income.loading') }}</span>
         </div>
 
         <div class="table-wrapper" *ngIf="!loading && incomes.length > 0">
           <table class="income-table">
             <thead>
               <tr>
-                <th>Descripción</th>
-                <th>Categoría</th>
-                <th>Fecha</th>
-                <th>Monto</th>
-                <th class="text-center">Acciones</th>
+                <th>{{ t('income.description') }}</th>
+                <th>{{ t('income.category') }}</th>
+                <th>{{ t('income.date') }}</th>
+                <th>{{ t('income.amount') }}</th>
+                <th class="text-center">{{ t('income.actions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -75,10 +75,10 @@
                 <td class="cell-date">{{ formatShortDate(income.transactionDate) }}</td>
                 <td class="cell-amount">+{{ formatCurrency(income.amount) }}</td>
                 <td class="cell-actions">
-                  <button class="btn-icon btn-edit" (click)="editIncome(income)" title="Editar">
+                  <button class="btn-icon btn-edit" (click)="editIncome(income)" [title]="t('income.edit')">
                     <span [innerHTML]="getIcon('edit')"></span>
                   </button>
-                  <button class="btn-icon btn-delete" (click)="deleteIncome(income)" title="Eliminar">
+                  <button class="btn-icon btn-delete" (click)="deleteIncome(income)" [title]="t('income.delete')">
                     <span [innerHTML]="getIcon('trash')"></span>
                   </button>
                 </td>
@@ -91,8 +91,8 @@
           <div class="empty-icon-box">
             <span class="empty-icon-q">Q</span>
           </div>
-          <p class="empty-text">No hay ingresos registrados</p>
-          <p class="empty-subtext">Haz clic en "+ Nuevo Ingreso" para comenzar</p>
+          <p class="empty-text">{{ t('income.noIncomes') }}</p>
+          <p class="empty-subtext">{{ t('income.noIncomesHint') }}</p>
         </div>
       </div>
     </div>
@@ -103,7 +103,7 @@
       </div>
 
       <div class="card chart-card">
-        <h3>Ingresos por Categoría</h3>
+        <h3>{{ t('income.byCategory') }}</h3>
 
         <div class="donut-chart-wrapper">
           <svg viewBox="0 0 200 200" class="donut-svg">
@@ -116,15 +116,15 @@
                 </feMerge>
               </filter>
             </defs>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="20" />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bg-raised)" stroke-width="20" />
             <circle *ngFor="let seg of donutSegments" cx="100" cy="100" r="80" fill="none"
               [attr.stroke]="seg.color" stroke-width="20"
               [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
               transform="rotate(-90 100 100)" class="donut-segment" [style.animation-delay]="seg.delay" />
-            <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">
+            <text x="100" y="95" text-anchor="middle" fill="var(--text-primary)" font-size="20" font-weight="700">
               {{ formatCurrency(donutTotal) }}
             </text>
-            <text x="100" y="115" text-anchor="middle" fill="#8B9BB4" font-size="10">Total</text>
+            <text x="100" y="115" text-anchor="middle" fill="var(--text-secondary)" font-size="10">{{ t('income.total') }}</text>
           </svg>
         </div>
 
@@ -137,7 +137,7 @@
         </div>
         <div class="chart-legend" *ngIf="categoryTotals.length === 0">
           <div class="legend-item empty-legend">
-            Sin ingresos registrados
+            {{ t('income.noIncomesShort') }}
           </div>
         </div>
       </div>

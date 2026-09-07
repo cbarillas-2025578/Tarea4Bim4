@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
   height: 100%;
 }
@@ -6,7 +6,7 @@
 .category-page {
   height: 100%;
   overflow-y: auto;
-  background: #0d1117;
+  background: var(--bg-page);
 }
 
 /* ─── Header ─── */
@@ -26,7 +26,7 @@
 .view-title {
   font-size: 24px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -41,15 +41,15 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: #8B9BB4;
+  color: var(--text-secondary);
 }
 
 .user-profile strong {
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .avatar {
-  background-color: #1E68B8;
+  background-color: var(--accent-primary);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -58,7 +58,7 @@
   justify-content: center;
   font-weight: bold;
   font-size: 12px;
-  color: #FFFFFF;
+  color: var(--text-primary);
   box-shadow: 0 0 10px rgba(30, 104, 184, 0.3);
 }
 
@@ -81,8 +81,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #18202c;
-  border: 1px solid #222d3d;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   padding: 10px 18px;
 }
@@ -90,25 +90,25 @@
 .stat-value {
   font-size: 20px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .stat-chip .stat-label {
   font-size: 12px;
-  color: #8B9BB4;
+  color: var(--text-secondary);
 }
 
 .stat-expense .stat-value {
-  color: #FF6B6B;
+  color: var(--accent-red);
 }
 
 .stat-income .stat-value {
-  color: #22C55E;
+  color: var(--accent-green);
 }
 
 /* ─── Error msg ─── */
 .error-msg {
-  color: #EF4444;
+  color: var(--accent-red);
   font-size: 13px;
   margin: 0;
   padding: 10px 14px;
@@ -127,7 +127,7 @@
 }
 
 .btn-new-category {
-  background: linear-gradient(90deg, #38bdf8, #facc15);
+  background: var(--gradient-active);
   border: none;
   padding: 8px 16px;
   border-radius: 20px;
@@ -155,7 +155,7 @@
 
 .hint-text {
   font-size: 13px;
-  color: #4A5568;
+  color: var(--text-muted);
 }
 
 /* ─── Card common ─── */
@@ -163,7 +163,7 @@
   background-color: #18202c;
   border-radius: 14px;
   padding: 18px;
-  border: 1px solid #222d3d;
+  border: 1px solid var(--border-soft);
 }
 
 /* ─── Form ─── */
@@ -179,7 +179,7 @@
 .form-header h3 {
   font-size: 16px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text-primary);
   margin: 0 0 16px 0;
 }
 
@@ -204,30 +204,30 @@
 .form-label {
   font-size: 12px;
   font-weight: 500;
-  color: #8B9BB4;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .form-input {
-  background: #11161D;
-  border: 1px solid #2A3546;
+  background: var(--bg-input);
+  border: 1px solid var(--border-soft);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 14px;
-  color: #FFFFFF;
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   transition: all 0.2s ease;
   outline: none;
 }
 
 .form-input:focus {
-  border-color: #38BDF8;
+  border-color: var(--accent-primary);
   box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
 }
 
 .form-input::placeholder {
-  color: #4A5568;
+  color: var(--text-muted);
 }
 
 select.form-input {
@@ -240,8 +240,8 @@ select.form-input {
 }
 
 select.form-input option {
-  background: #11161D;
-  color: #FFFFFF;
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .color-options {
@@ -260,7 +260,7 @@ select.form-input option {
 }
 
 .color-dot.selected {
-  border-color: #FFFFFF;
+  border-color: var(--text-primary);
   transform: scale(1.15);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
@@ -277,8 +277,8 @@ select.form-input option {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #11161D;
-  border: 1px solid #2A3546;
+  background: var(--bg-input);
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
   font-size: 20px;
   cursor: pointer;
@@ -286,12 +286,12 @@ select.form-input option {
 }
 
 .icon-option:hover {
-  border-color: #38BDF8;
+  border-color: var(--accent-primary);
   transform: translateY(-2px);
 }
 
 .icon-option.selected {
-  border-color: #38BDF8;
+  border-color: var(--accent-primary);
   background: rgba(56, 189, 248, 0.12);
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
 }
@@ -300,7 +300,7 @@ select.form-input option {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #11161D;
+  background: var(--bg-input);
   border: 1px dashed #2A3546;
   border-radius: 10px;
   padding: 14px 16px;
@@ -320,7 +320,7 @@ select.form-input option {
 .preview-name {
   font-size: 15px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text-primary);
   flex: 1;
 }
 
@@ -342,7 +342,7 @@ select.form-input option {
   align-items: center;
   gap: 8px;
   padding: 10px 24px;
-  background: linear-gradient(90deg, #38BDF8 0%, #FACC15 100%);
+  background: var(--gradient-active);
   border: none;
   border-radius: 20px;
   color: #0F172A;
@@ -365,9 +365,9 @@ select.form-input option {
 .btn-cancel {
   padding: 10px 18px;
   background: transparent;
-  border: 1px solid #2A3546;
+  border: 1px solid var(--border-soft);
   border-radius: 8px;
-  color: #8B9BB4;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -376,8 +376,8 @@ select.form-input option {
 }
 
 .btn-cancel:hover {
-  border-color: #4A5568;
-  color: #FFFFFF;
+  border-color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 /* ─── Categories card ─── */
@@ -389,7 +389,7 @@ select.form-input option {
   font-size: 15px;
   margin: 0 0 16px 0;
   font-weight: 500;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .loading-state {
@@ -398,15 +398,15 @@ select.form-input option {
   justify-content: center;
   gap: 12px;
   padding: 48px 0;
-  color: #8B9BB4;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #222d3d;
-  border-top-color: #38bdf8;
+  border: 2px solid var(--border-soft);
+  border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -459,7 +459,7 @@ select.form-input option {
 .cat-name {
   font-size: 14px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -491,7 +491,7 @@ select.form-input option {
 }
 
 .btn-edit {
-  color: #38BDF8;
+  color: var(--accent-primary);
 }
 
 .btn-edit:hover {
@@ -499,7 +499,7 @@ select.form-input option {
 }
 
 .btn-delete {
-  color: #EF4444;
+  color: var(--accent-red);
 }
 
 .btn-delete:hover {
@@ -534,13 +534,13 @@ select.form-input option {
 .empty-text {
   font-size: 16px;
   font-weight: 600;
-  color: #8B9BB4;
+  color: var(--text-secondary);
   margin: 0 0 6px 0;
 }
 
 .empty-subtext {
   font-size: 13px;
-  color: #4A5568;
+  color: var(--text-muted);
   margin: 0;
 }
 

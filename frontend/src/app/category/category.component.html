@@ -1,11 +1,11 @@
 <div class="category-page">
   <div class="category-header">
     <div class="header-left">
-      <h1 class="view-title">Categorías</h1>
+      <h1 class="view-title">{{ t('category.title') }}</h1>
     </div>
     <div class="header-right">
       <div class="user-profile">
-        <span>Hola, <strong>{{ userName }}</strong></span>
+        <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
         <div class="avatar">{{ userInitials }}</div>
       </div>
     </div>
@@ -15,15 +15,15 @@
     <div class="stats-row">
       <div class="stat-chip">
         <span class="stat-value">{{ categories.length }}</span>
-        <span class="stat-label">Total</span>
+        <span class="stat-label">{{ t('category.total') }}</span>
       </div>
       <div class="stat-chip stat-expense">
         <span class="stat-value">{{ expenseCount }}</span>
-        <span class="stat-label">De gastos</span>
+        <span class="stat-label">{{ t('category.ofExpense') }}</span>
       </div>
       <div class="stat-chip stat-income">
         <span class="stat-value">{{ incomeCount }}</span>
-        <span class="stat-label">De ingresos</span>
+        <span class="stat-label">{{ t('category.ofIncome') }}</span>
       </div>
     </div>
 
@@ -31,35 +31,35 @@
 
     <div class="category-toolbar">
       <button class="btn-new-category" (click)="startCreate()">
-        <span class="btn-plus">+</span> Nueva Categoría
+        <span class="btn-plus">+</span> {{ t('category.new') }}
       </button>
-      <div class="hint-text">Organiza tus gastos e ingresos por categoría</div>
+      <div class="hint-text">{{ t('category.hint') }}</div>
     </div>
 
     <div class="category-form-section" *ngIf="showForm">
       <div class="card form-card" [class.editing]="editingCategory">
         <div class="form-header">
-          <h3>{{ editingCategory ? 'Editar categoría' : 'Nueva categoría' }}</h3>
+          <h3>{{ editingCategory ? t('category.editTitle') : t('category.newTitle') }}</h3>
         </div>
 
         <form (ngSubmit)="save()" class="form-body">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Nombre</label>
+              <label class="form-label">{{ t('category.name') }}</label>
               <input type="text" class="form-input" [(ngModel)]="newName" name="name"
-                placeholder="Ej. Alimentación" required />
+                [placeholder]="t('category.namePlaceholder')" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Tipo</label>
+              <label class="form-label">{{ t('category.type') }}</label>
               <select class="form-input" [(ngModel)]="newType" name="type">
-                <option value="expense">Gasto</option>
-                <option value="income">Ingreso</option>
+                <option value="expense">{{ t('category.typeExpense') }}</option>
+                <option value="income">{{ t('category.typeIncome') }}</option>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Color</label>
+            <label class="form-label">{{ t('category.color') }}</label>
             <div class="color-options">
               <button type="button" *ngFor="let color of colorOptions" class="color-dot"
                 [ngClass]="{ selected: newColor === color }"
@@ -70,7 +70,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Icono</label>
+            <label class="form-label">{{ t('category.icon') }}</label>
             <div class="icon-options">
               <button type="button" *ngFor="let icon of iconOptions" class="icon-option"
                 [ngClass]="{ selected: newIcon === icon }"
@@ -83,27 +83,27 @@
           <div class="form-preview">
             <span class="preview-icon" [style.background]="newColor + '1A'"
               [style.borderColor]="newColor">{{ newIcon }}</span>
-            <span class="preview-name">{{ newName || 'Categoría' }}</span>
+            <span class="preview-name">{{ newName || t('category.defaultName') }}</span>
             <span class="preview-type" [style.color]="newColor">{{ typeLabel(newType) }}</span>
           </div>
 
           <div class="form-actions">
             <button type="submit" class="btn-save">
-              <span>{{ editingCategory ? 'Guardar cambios' : 'Crear categoría' }}</span>
+              <span>{{ editingCategory ? t('category.saveChanges') : t('category.create') }}</span>
               <span class="btn-arrow">→</span>
             </button>
-            <button type="button" class="btn-cancel" (click)="cancelForm()">Cancelar</button>
+            <button type="button" class="btn-cancel" (click)="cancelForm()">{{ t('category.cancel') }}</button>
           </div>
         </form>
       </div>
     </div>
 
     <div class="card categories-card">
-      <h3>Mis categorías</h3>
+      <h3>{{ t('category.mine') }}</h3>
 
       <div class="loading-state" *ngIf="loading">
         <div class="spinner"></div>
-        <span>Cargando categorías...</span>
+        <span>{{ t('category.loading') }}</span>
       </div>
 
       <div class="categories-grid" *ngIf="!loading && categories.length > 0">
@@ -117,10 +117,10 @@
             <span class="cat-type" [style.color]="category.color">{{ typeLabel(category.type) }}</span>
           </div>
           <div class="cat-actions">
-            <button class="btn-icon btn-edit" (click)="editCategory(category)" title="Editar">
+            <button class="btn-icon btn-edit" (click)="editCategory(category)" [title]="t('category.edit')">
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>
-            <button class="btn-icon btn-delete" (click)="deleteCategory(category)" title="Eliminar">
+            <button class="btn-icon btn-delete" (click)="deleteCategory(category)" [title]="t('category.delete')">
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>
           </div>
@@ -131,8 +131,8 @@
         <div class="empty-icon-box">
           <span class="empty-icon">🗂️</span>
         </div>
-        <p class="empty-text">No hay categorías registradas</p>
-        <p class="empty-subtext">Haz clic en "Nueva Categoría" para comenzar</p>
+        <p class="empty-text">{{ t('category.noCategories') }}</p>
+        <p class="empty-subtext">{{ t('category.noCategoriesHint') }}</p>
       </div>
     </div>
   </div>

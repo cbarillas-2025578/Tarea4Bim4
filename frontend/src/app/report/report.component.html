@@ -1,13 +1,13 @@
 <div class="report-page">
   <div class="report-header">
     <div class="header-left">
-      <h1 class="view-title">Reportes</h1>
+      <h1 class="view-title">{{ t('report.title') }}</h1>
     </div>
     <div class="header-right">
       <div class="select-pill">
-        <span>Período</span>
+        <span>{{ t('report.period') }}</span>
         <select [(ngModel)]="selectedMonthIdx" (ngModelChange)="onPeriodChange()">
-          <option [ngValue]="0">Anual</option>
+          <option [ngValue]="0">{{ t('report.annual') }}</option>
           <option *ngFor="let m of monthNames; let i = index" [ngValue]="i + 1">{{ m }}</option>
         </select>
         <span>/</span>
@@ -16,7 +16,7 @@
         </select>
       </div>
       <div class="user-profile">
-        <span>Hola, <strong>{{ userName }}</strong></span>
+        <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
         <div class="avatar">{{ userInitials }}</div>
       </div>
     </div>
@@ -32,7 +32,7 @@
         </button>
         <button class="month-tab month-all" [class.active]="selectedMonthIdx === 0"
           (click)="selectMonth(0)">
-          Todo
+          {{ t('report.all') }}
         </button>
       </div>
 
@@ -40,31 +40,31 @@
 
       <div class="loading-state" *ngIf="loading">
         <div class="spinner"></div>
-        <span>Generando reporte...</span>
+        <span>{{ t('report.generating') }}</span>
       </div>
 
       <ng-container *ngIf="!loading && report">
         <div class="summary-grid">
           <div class="summary-card income">
-            <span class="summary-label">Ingresos</span>
+            <span class="summary-label">{{ t('report.income') }}</span>
             <span class="summary-value">{{ formatCurrency(report.summary.totalIncome) }}</span>
-            <span class="summary-sub">{{ report.summary.incomeCount }} transacciones</span>
+            <span class="summary-sub">{{ report.summary.incomeCount }} {{ t('report.transactions') }}</span>
           </div>
           <div class="summary-card expense">
-            <span class="summary-label">Gastos</span>
+            <span class="summary-label">{{ t('report.expenses') }}</span>
             <span class="summary-value">{{ formatCurrency(report.summary.totalExpenses) }}</span>
-            <span class="summary-sub">{{ report.summary.expenseCount }} transacciones</span>
+            <span class="summary-sub">{{ report.summary.expenseCount }} {{ t('report.transactions') }}</span>
           </div>
           <div class="summary-card balance" [class.negative]="report.summary.balance < 0">
-            <span class="summary-label">Balance</span>
+            <span class="summary-label">{{ t('report.balance') }}</span>
             <span class="summary-value">{{ formatCurrency(report.summary.balance) }}</span>
-            <span class="summary-sub">{{ report.summary.transactionCount }} transacciones totales</span>
+            <span class="summary-sub">{{ report.summary.transactionCount }} {{ t('report.totalTransactions') }}</span>
           </div>
         </div>
 
         <div class="card chart-card">
           <div class="chart-header">
-            <h3>Ingresos vs Gastos</h3>
+            <h3>{{ t('report.incomeVsExpenses') }}</h3>
             <span class="chart-sub">{{ periodLabel }}</span>
           </div>
 
@@ -89,23 +89,23 @@
           </div>
 
           <div class="chart-legend">
-            <span class="legend-item"><span class="dot income-dot"></span> Ingresos</span>
-            <span class="legend-item"><span class="dot expense-dot"></span> Gastos</span>
+            <span class="legend-item"><span class="dot income-dot"></span> {{ t('report.income') }}</span>
+            <span class="legend-item"><span class="dot expense-dot"></span> {{ t('report.expenses') }}</span>
           </div>
         </div>
 
         <div class="card table-card" *ngIf="!report.month">
           <div class="card-title-row">
-            <h3>Detalle mensual</h3>
+            <h3>{{ t('report.monthlyDetail') }}</h3>
           </div>
           <div class="table-wrapper">
             <table class="report-table">
               <thead>
                 <tr>
-                  <th>Mes</th>
-                  <th class="text-right">Ingresos</th>
-                  <th class="text-right">Gastos</th>
-                  <th class="text-right">Balance</th>
+                  <th>{{ t('report.month') }}</th>
+                  <th class="text-right">{{ t('report.income') }}</th>
+                  <th class="text-right">{{ t('report.expenses') }}</th>
+                  <th class="text-right">{{ t('report.balance') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -127,7 +127,7 @@
       <ng-container *ngIf="!loading && report">
         <div class="card donut-card">
           <div class="card-title-row">
-            <h3>Gastos por categoría</h3>
+            <h3>{{ t('report.expenseByCategory') }}</h3>
           </div>
 
           <div class="donut-chart-wrapper" *ngIf="donutCategories.length > 0">
@@ -141,15 +141,15 @@
                   </feMerge>
                 </filter>
               </defs>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="20" />
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bg-raised)" stroke-width="20" />
               <circle *ngFor="let seg of donutSegments" cx="100" cy="100" r="80" fill="none"
                 [attr.stroke]="seg.color" stroke-width="20"
                 [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
                 transform="rotate(-90 100 100)" class="donut-segment donut-segment-exp" [style.animation-delay]="seg.delay" />
-              <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">
+              <text x="100" y="95" text-anchor="middle" fill="var(--text-primary)" font-size="20" font-weight="700">
                 {{ formatCurrency(donutTotal) }}
               </text>
-              <text x="100" y="115" text-anchor="middle" fill="#8B9BB4" font-size="10">Gastos</text>
+              <text x="100" y="115" text-anchor="middle" fill="var(--text-secondary)" font-size="10">{{ t('report.expenses') }}</text>
             </svg>
           </div>
           <div class="chart-legend" *ngIf="donutCategories.length > 0">
@@ -160,13 +160,13 @@
             </div>
           </div>
           <div class="chart-legend" *ngIf="donutCategories.length === 0">
-            <div class="legend-item empty-legend">Sin gastos registrados</div>
+            <div class="legend-item empty-legend">{{ t('report.noExpenses') }}</div>
           </div>
         </div>
 
         <div class="card donut-card">
           <div class="card-title-row">
-            <h3>Ingresos por fuente</h3>
+            <h3>{{ t('report.incomeBySource') }}</h3>
           </div>
 
           <div class="donut-chart-wrapper" *ngIf="incomeDonutCategories.length > 0">
@@ -180,15 +180,15 @@
                   </feMerge>
                 </filter>
               </defs>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="20" />
+              <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bg-raised)" stroke-width="20" />
               <circle *ngFor="let seg of incomeDonutSegments" cx="100" cy="100" r="80" fill="none"
                 [attr.stroke]="seg.color" stroke-width="20"
                 [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
                 transform="rotate(-90 100 100)" class="donut-segment donut-segment-inc" [style.animation-delay]="seg.delay" />
-              <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">
+              <text x="100" y="95" text-anchor="middle" fill="var(--text-primary)" font-size="20" font-weight="700">
                 {{ formatCurrency(incomeDonutTotal) }}
               </text>
-              <text x="100" y="115" text-anchor="middle" fill="#8B9BB4" font-size="10">Ingresos</text>
+              <text x="100" y="115" text-anchor="middle" fill="var(--text-secondary)" font-size="10">{{ t('report.income') }}</text>
             </svg>
           </div>
           <div class="chart-legend" *ngIf="incomeDonutCategories.length > 0">
@@ -199,23 +199,23 @@
             </div>
           </div>
           <div class="chart-legend" *ngIf="incomeDonutCategories.length === 0">
-            <div class="legend-item empty-legend">Sin ingresos registrados</div>
+            <div class="legend-item empty-legend">{{ t('report.noIncomes') }}</div>
           </div>
         </div>
 
         <div class="card list-card">
           <div class="card-title-row">
-            <h3>{{ report.month ? monthNames[report.month - 1] : 'Año' }} {{ report.year }}</h3>
+            <h3>{{ report.month ? monthNames[report.month - 1] : t('report.year') }} {{ report.year }}</h3>
           </div>
           <div class="mini-stat" *ngIf="report.summary.incomeCount > 0 || report.summary.expenseCount > 0">
-            <span class="mini-label">Categoría con mayor gasto</span>
+            <span class="mini-label">{{ t('report.topExpenseCategory') }}</span>
             <span class="mini-value" *ngIf="report.expenseByCategory.length > 0">
               {{ report.expenseByCategory[0].name }}
             </span>
             <span class="mini-value" *ngIf="report.expenseByCategory.length === 0">-</span>
           </div>
           <div class="mini-stat" *ngIf="report.summary.incomeCount > 0 || report.summary.expenseCount > 0">
-            <span class="mini-label">Fuente principal de ingreso</span>
+            <span class="mini-label">{{ t('report.topIncomeSource') }}</span>
             <span class="mini-value" *ngIf="report.incomeBySource.length > 0">
               {{ report.incomeBySource[0].name }}
             </span>

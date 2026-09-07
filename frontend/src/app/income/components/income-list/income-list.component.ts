@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { IncomeService } from "../../services/income.service";
 import { Income, IncomeFilters } from "../../models/income.model";
+import { SettingsService } from "../../../services/settings.service";
 import { IncomeFormComponent } from "../income-form/income-form.component";
 import { IncomeFiltersComponent } from "../income-filters/income-filters.component";
 
@@ -19,7 +20,10 @@ export class IncomeListComponent implements OnInit {
   loading = false;
   errorMessage = "";
 
-  constructor(private incomeService: IncomeService) {}
+  constructor(
+    private incomeService: IncomeService,
+    private settingsService: SettingsService
+  ) {}
 
   ngOnInit(): void {
     this.loadIncomes();
@@ -59,7 +63,7 @@ export class IncomeListComponent implements OnInit {
   }
 
   deleteIncome(income: Income): void {
-    const confirmed = confirm(`¿Eliminar el ingreso de Q${income.amount} en "${income.source}"?`);
+    const confirmed = confirm(`¿Eliminar el ingreso de ${this.formatCurrency(income.amount)} en "${income.source}"?`);
     if (!confirmed) return;
 
     this.incomeService.delete(income.id).subscribe({
@@ -73,6 +77,10 @@ export class IncomeListComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return "Q " + Math.abs(amount).toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.settingsService.formatCurrency(amount);
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 }

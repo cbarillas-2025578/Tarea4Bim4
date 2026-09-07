@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, NavigationEnd } from '@angular/router';
 import { forkJoin, Subject, takeUntil, filter } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { SettingsService } from '../services/settings.service';
 import { IncomeService } from '../income/services/income.service';
 import { Income } from '../income/models/income.model';
 import { environment } from '../../environments/environment';
@@ -96,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private incomeService: IncomeService,
     private http: HttpClient,
+    private settingsService: SettingsService,
     private sanitizer: DomSanitizer
   ) {}
 
@@ -327,8 +329,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    const abs = Math.abs(amount);
-    return (amount < 0 ? '-' : '') + 'Q ' + abs.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.settingsService.formatCurrency(amount);
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 
   logout(): void {

@@ -3,7 +3,7 @@
     <div class="sidebar-top">
       <div class="brand">
         <img src="assets/logo.png" alt="Logo" class="sidebar-logo-img">
-        <span class="brand-name">Control de Gastos</span>
+        <span class="brand-name">{{ t('app.brand') }}</span>
       </div>
 
       <nav class="nav-menu">
@@ -12,7 +12,7 @@
           [class.active]="item.active"
           (click)="navigateTo(item.route)">
           <span class="nav-icon" [innerHTML]="getIcon(item.icon)"></span>
-          <span class="nav-label">{{ item.label }}</span>
+          <span class="nav-label">{{ t(item.labelKey) }}</span>
         </button>
       </nav>
     </div>
@@ -20,7 +20,7 @@
     <div class="sidebar-bottom">
       <button class="nav-item logout-btn" (click)="logout()">
         <span class="nav-icon" [innerHTML]="getIcon('logout')"></span>
-        <span class="nav-label">Cerrar sesión</span>
+        <span class="nav-label">{{ t('nav.logout') }}</span>
       </button>
     </div>
   </aside>

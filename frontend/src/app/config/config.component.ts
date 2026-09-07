@@ -1,7 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { SettingsService, ThemeOption, LanguageOption } from "../services/settings.service";
 
 @Component({
   selector: "app-config",
@@ -10,14 +12,14 @@ import { AuthService } from "../services/auth.service";
   templateUrl: "./config.component.html",
   styleUrls: ["./config.component.css"],
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, OnDestroy {
   userName = "";
   userEmail = "";
   userInitials = "";
 
-  theme = "dark";
-  language = "es";
-  currency = "Q";
+  theme: ThemeOption = "dark";
+  language: LanguageOption = "es";
+  currency: "Q" | "$" = "Q";
 
   notifyEmail = true;
   notifyPush = true;
@@ -26,9 +28,12 @@ export class ConfigComponent implements OnInit {
   savedMessage = "";
   saveError = "";
 
-  private settingsKey = "app_settings";
+  private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private settingsService: SettingsService
+  ) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -38,46 +43,68 @@ export class ConfigComponent implements OnInit {
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
     }
     this.loadSettings();
+
+    this.settingsService.settings$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(s => {
+        this.theme = s.theme;
+        this.language = s.language;
+        this.currency = s.currency;
+        this.notifyEmail = s.notifyEmail;
+        this.notifyPush = s.notifyPush;
+        this.notifyWeekly = s.notifyWeekly;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 
   private loadSettings(): void {
-    try {
-      const raw = localStorage.getItem(this.settingsKey);
-      if (!raw) return;
-      const s = JSON.parse(raw);
-      if (s.theme) this.theme = s.theme;
-      if (s.language) this.language = s.language;
-      if (s.currency) this.currency = s.currency;
-      if (typeof s.notifyEmail === "boolean") this.notifyEmail = s.notifyEmail;
-      if (typeof s.notifyPush === "boolean") this.notifyPush = s.notifyPush;
-      if (typeof s.notifyWeekly === "boolean") this.notifyWeekly = s.notifyWeekly;
-    } catch {
-      this.persist();
-    }
+    const s = this.settingsService.settings;
+    this.theme = s.theme;
+    this.language = s.language;
+    this.currency = s.currency;
+    this.notifyEmail = s.notifyEmail;
+    this.notifyPush = s.notifyPush;
+    this.notifyWeekly = s.notifyWeekly;
   }
 
-  private persist(): void {
-    localStorage.setItem(this.settingsKey, JSON.stringify({
-      theme: this.theme,
-      language: this.language,
+  onThemeChange(): void {
+    this.settingsService.update({ theme: this.theme });
+  }
+
+  onSettingsChange(): void {
+    this.settingsService.update({
       currency: this.currency,
+      language: this.language,
+    });
+  }
+
+  onNotificationsChange(): void {
+    this.settingsService.update({
       notifyEmail: this.notifyEmail,
       notifyPush: this.notifyPush,
       notifyWeekly: this.notifyWeekly,
-    }));
+    });
   }
 
   saveProfile(): void {
     const name = this.userName.trim();
     const email = this.userEmail.trim();
     if (!name) {
-      this.saveError = "El nombre no puede estar vacío.";
+      this.saveError = this.t("config.nameEmpty");
       this.showSaved("");
       setTimeout(() => (this.saveError = ""), 3000);
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      this.saveError = "Ingresa un correo electrónico válido.";
+      this.saveError = this.t("config.invalidEmail");
       this.showSaved("");
       setTimeout(() => (this.saveError = ""), 3000);
       return;
@@ -85,31 +112,33 @@ export class ConfigComponent implements OnInit {
     this.userInitials = name.substring(0, 2).toUpperCase();
     this.authService.updateProfile(name, email);
     this.saveError = "";
-    this.showSaved("Perfil actualizado correctamente");
+    this.showSaved(this.t("config.profileSaved"));
   }
 
   savePreferences(): void {
-    this.persist();
+    this.settingsService.update({
+      theme: this.theme,
+      currency: this.currency,
+      language: this.language,
+    });
     this.saveError = "";
-    this.showSaved("Preferencias guardadas");
+    this.showSaved(this.t("config.preferencesSaved"));
   }
 
   saveNotifications(): void {
-    this.persist();
+    this.settingsService.update({
+      notifyEmail: this.notifyEmail,
+      notifyPush: this.notifyPush,
+      notifyWeekly: this.notifyWeekly,
+    });
     this.saveError = "";
-    this.showSaved("Notificaciones actualizadas");
+    this.showSaved(this.t("config.notificationsSaved"));
   }
 
   resetSettings(): void {
-    this.theme = "dark";
-    this.language = "es";
-    this.currency = "Q";
-    this.notifyEmail = true;
-    this.notifyPush = true;
-    this.notifyWeekly = false;
-    this.persist();
+    this.settingsService.reset();
     this.saveError = "";
-    this.showSaved("Configuración restablecida");
+    this.showSaved(this.t("config.resetDone"));
   }
 
   private showSaved(msg: string): void {

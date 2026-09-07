@@ -7,18 +7,18 @@
 .app-layout {
   display: flex;
   height: 100vh;
-  background: #0b1329;
+  background: var(--bg-sidebar);
 }
 
 .sidebar {
   width: 260px;
   min-width: 260px;
-  background: #0b1329;
+  background: var(--bg-sidebar);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 14px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--border-color);
   animation: slideInLeft 0.4s ease-out;
 }
 
@@ -47,11 +47,17 @@
   mix-blend-mode: screen;
 }
 
+@media (prefers-color-scheme: light) {
+  body[data-theme="light"] .sidebar-logo-img {
+    mix-blend-mode: multiply;
+  }
+}
+
 .brand-name {
   margin-top: 4px;
   font-size: 24px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--text-primary);
   text-align: center;
   letter-spacing: 0.3px;
 }
@@ -70,7 +76,7 @@
   border-radius: 10px;
   border: none;
   background: transparent;
-  color: #7A8B9E;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -81,14 +87,14 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #FFFFFF;
+  background: var(--overlay-hover);
+  color: var(--text-primary);
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #d31027 0%, #ea384d 100%);
+  background: var(--gradient-btn);
   color: #FFFFFF;
-  box-shadow: 0 4px 15px rgba(234, 56, 77, 0.4);
+  box-shadow: 0 4px 15px var(--overlay-card);
 }
 
 .nav-item.active .nav-icon {
@@ -116,16 +122,16 @@
 
 .sidebar-bottom {
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-color);
 }
 
 .logout-btn:hover {
-  background: rgba(255, 59, 92, 0.1);
-  color: #FF3B5C;
+  background: var(--overlay-hover);
+  color: var(--accent-red);
 }
 
 .main-content {
   flex: 1;
   overflow: hidden;
-  background: #0b1329;
+  background: var(--bg-sidebar);
 }

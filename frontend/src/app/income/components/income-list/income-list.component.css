@@ -1,12 +1,12 @@
-.income-container {
+﻿.income-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 .income-table-card {
-  background: #171E2D;
-  border: 1px solid #232D3F;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   overflow: hidden;
   animation: fadeInUp 0.4s ease-out 0.2s both;
@@ -17,14 +17,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 18px 24px;
-  border-bottom: 1px solid #232D3F;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .table-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .total-badge {
@@ -32,15 +32,15 @@
   align-items: center;
   gap: 10px;
   padding: 6px 16px;
-  background: rgba(0, 163, 255, 0.1);
-  border: 1px solid rgba(0, 163, 255, 0.2);
+  background: var(--overlay-card);
+  border: 1px solid var(--overlay-hover);
   border-radius: 8px;
 }
 
 .total-label {
   font-size: 12px;
   font-weight: 500;
-  color: #7A8B9E;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -48,11 +48,11 @@
 .total-amount {
   font-size: 16px;
   font-weight: 700;
-  color: #00A3FF;
+  color: var(--accent-primary);
 }
 
 .error-msg {
-  color: #FF3B5C;
+  color: var(--accent-red);
   font-size: 13px;
   margin: 0;
   padding: 12px 24px;
@@ -64,15 +64,15 @@
   justify-content: center;
   gap: 12px;
   padding: 48px 24px;
-  color: #7A8B9E;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #232D3F;
-  border-top-color: #00A3FF;
+  border: 2px solid var(--border-soft);
+  border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -91,27 +91,27 @@
 }
 
 .income-table thead tr {
-  border-bottom: 1px solid #232D3F;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .income-table th {
   padding: 12px 24px;
   font-size: 11px;
   font-weight: 600;
-  color: #4A5568;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: left;
 }
 
 .table-row {
-  border-bottom: 1px solid rgba(35, 45, 63, 0.5);
+  border-bottom: 1px solid var(--border-line);
   transition: background 0.2s ease;
   animation: fadeInRow 0.3s ease-out both;
 }
 
 .table-row:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--overlay-row);
 }
 
 @keyframes fadeInRow {
@@ -122,11 +122,11 @@
 .income-table td {
   padding: 14px 24px;
   font-size: 13px;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .cell-date {
-  color: #7A8B9E !important;
+  color: var(--text-muted) !important;
   font-size: 12px !important;
   white-space: nowrap;
 }
@@ -134,16 +134,16 @@
 .source-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: rgba(0, 163, 255, 0.1);
-  border: 1px solid rgba(0, 163, 255, 0.2);
+  background: var(--overlay-card);
+  border: 1px solid var(--overlay-hover);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #00A3FF;
+  color: var(--accent-primary);
 }
 
 .cell-desc {
-  color: #7A8B9E !important;
+  color: var(--text-muted) !important;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,7 +152,7 @@
 
 .cell-amount {
   font-weight: 700;
-  color: #00A3FF !important;
+  color: var(--accent-primary) !important;
   white-space: nowrap;
 }
 
@@ -173,11 +173,11 @@
 }
 
 .btn-edit:hover {
-  background: rgba(0, 163, 255, 0.1);
+  background: var(--overlay-card);
 }
 
 .btn-delete:hover {
-  background: rgba(255, 59, 92, 0.1);
+  background: var(--overlay-card);
 }
 
 .empty-state {
@@ -198,13 +198,13 @@
 .empty-text {
   font-size: 16px;
   font-weight: 600;
-  color: #7A8B9E;
+  color: var(--text-muted);
   margin: 0 0 6px 0;
 }
 
 .empty-subtext {
   font-size: 13px;
-  color: #4A5568;
+  color: var(--text-muted);
   margin: 0;
 }
 

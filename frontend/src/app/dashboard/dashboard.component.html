@@ -1,13 +1,13 @@
 <div class="dashboard-content">
   <div class="dashboard-header">
     <div class="header-left">
-      <h1 class="view-title">Inicio</h1>
-      <p class="view-subtitle">Resumen de tu actividad financiera</p>
+      <h1 class="view-title">{{ t('dash.title') }}</h1>
+      <p class="view-subtitle">{{ t('dash.subtitle') }}</p>
     </div>
     <div class="header-right">
       <div class="user-greeting">
         <div class="greeting-row">
-          <span>Hola, <strong>{{ userName }}</strong></span>
+          <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
           <div class="avatar">{{ userInitials }}</div>
         </div>
         <div class="month-selector">
@@ -32,10 +32,10 @@
   <div class="charts-row">
     <div class="chart-card chart-card-large">
       <div class="chart-card-header">
-        <h3>Ingresos vs Gastos</h3>
+        <h3>{{ t('dash.incomeVsExpense') }}</h3>
         <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:#00A3FF"></span>Ingresos</span>
-          <span class="legend-item"><span class="legend-dot" style="background:#FF3B5C"></span>Gastos</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-primary)"></span>Ingresos</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent-red)"></span>Gastos</span>
         </div>
       </div>
       <div class="line-chart-container">
@@ -46,12 +46,12 @@
           <svg viewBox="0 0 600 200" class="line-chart-svg" preserveAspectRatio="none">
             <defs>
               <linearGradient id="gradientIncome" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#00bfff;stop-opacity:0.3" />
-                <stop offset="100%" style="stop-color:#00bfff;stop-opacity:0" />
+                <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:var(--accent-primary);stop-opacity:0" />
               </linearGradient>
               <linearGradient id="gradientExpense" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#ff3b5c;stop-opacity:0.3" />
-                <stop offset="100%" style="stop-color:#ff3b5c;stop-opacity:0" />
+                <stop offset="0%" style="stop-color:var(--accent-red);stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:var(--accent-red);stop-opacity:0" />
               </linearGradient>
               <filter id="glowLine" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
@@ -62,14 +62,14 @@
               </filter>
             </defs>
             <polygon fill="url(#gradientIncome)" [attr.points]="chartIncomeArea" />
-            <path fill="none" stroke="#00A3FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartIncomePath" filter="url(#glowLine)" />
+            <path fill="none" stroke="var(--accent-primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartIncomePath" filter="url(#glowLine)" />
             <polygon fill="url(#gradientExpense)" [attr.points]="chartExpenseArea" />
-            <path fill="none" stroke="#FF3B5C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartExpensePath" filter="url(#glowLine)" />
+            <path fill="none" stroke="var(--accent-red)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartExpensePath" filter="url(#glowLine)" />
             <circle *ngFor="let dot of chartIncomeDots; let i = index"
-              [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="#00A3FF" class="dot-animate"
+              [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="var(--accent-primary)" class="dot-animate"
               [style.animation-delay]="(i * 0.1) + 's'" />
             <circle *ngFor="let dot of chartExpenseDots; let i = index"
-              [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="#FF3B5C" class="dot-animate"
+              [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="var(--accent-red)" class="dot-animate"
               [style.animation-delay]="(i * 0.1) + 's'" />
           </svg>
           <div class="chart-x-axis">
@@ -81,7 +81,7 @@
 
     <div class="chart-card chart-card-medium">
       <div class="chart-card-header">
-        <h3>Gastos por Categoría</h3>
+        <h3>{{ t('dash.expenseByCategory') }}</h3>
       </div>
       <div class="donut-container">
         <svg viewBox="0 0 200 200" class="donut-chart">
@@ -94,15 +94,15 @@
               </feMerge>
             </filter>
           </defs>
-          <circle cx="100" cy="100" r="80" fill="none" stroke="#1a2235" stroke-width="24" />
+          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bg-raised)" stroke-width="24" />
           <circle *ngFor="let seg of donutSegments" cx="100" cy="100" r="80" fill="none"
             [attr.stroke]="seg.color" stroke-width="24"
             [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
             transform="rotate(-90 100 100)" class="donut-segment" [style.animation-delay]="seg.delay" />
-          <text x="100" y="95" text-anchor="middle" fill="#FFFFFF" font-size="22" font-weight="700">
+          <text x="100" y="95" text-anchor="middle" fill="var(--text-primary)" font-size="22" font-weight="700">
             {{ formatCurrency(donutTotal) }}
           </text>
-          <text x="100" y="115" text-anchor="middle" fill="#7A8B9E" font-size="11">Total Gastos</text>
+          <text x="100" y="115" text-anchor="middle" fill="var(--text-secondary)" font-size="11">Total Gastos</text>
         </svg>
         <div class="donut-legend" *ngIf="categoryTotals.length > 0">
           <div class="donut-legend-item" *ngFor="let cat of categoryTotals">
@@ -111,8 +111,8 @@
           </div>
         </div>
         <div class="donut-legend" *ngIf="categoryTotals.length === 0">
-          <div class="donut-legend-item" style="color:#4A5568; grid-column: 1/-1; justify-content: center;">
-            Sin gastos registrados
+          <div class="donut-legend-item" style="color:var(--text-muted); grid-column: 1/-1; justify-content: center;">
+            {{ t('dash.noExpenses') }}
           </div>
         </div>
       </div>
@@ -120,13 +120,13 @@
 
     <div class="chart-card chart-card-medium">
       <div class="chart-card-header">
-        <h3>Últimos Movimientos</h3>
+        <h3>{{ t('dash.recentTransactions') }}</h3>
       </div>
       <div class="transactions-table">
         <div class="transactions-header">
-          <span>Transacción</span>
-          <span>Monto</span>
-          <span>Fecha</span>
+          <span>{{ t('dash.transaction') }}</span>
+          <span>{{ t('dash.amount') }}</span>
+          <span>{{ t('dash.date') }}</span>
         </div>
         <div class="transaction-row" *ngFor="let tx of recentTransactions; let i = index"
           [style.animation-delay]="(i * 0.08) + 's'">
@@ -145,7 +145,7 @@
           <span class="tx-date">{{ tx.date }}</span>
         </div>
         <div class="empty-transactions" *ngIf="recentTransactions.length === 0">
-          <span style="color:#4A5568; font-size:13px;">Sin movimientos aún</span>
+          <span style="color:var(--text-muted); font-size:13px;">{{ t('dash.noTransactions') }}</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
   min-height: 100vh;
 }
@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #0e1a38 0%, #080f20 100%);
+  background: radial-gradient(circle at top left, var(--bg-secondary) 0%, var(--bg-page) 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -88,7 +88,7 @@
 }
 
 .login-card {
-  background: #121824;
+  background: var(--bg-elevated);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   padding: 44px 40px 36px;
@@ -110,7 +110,7 @@
   transform: translateX(-50%);
   width: 200px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00bfff, #ff3b5c, #ffcc00, transparent);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), var(--accent-red), var(--accent-yellow), transparent);
   animation: glowSweep 3s ease-in-out infinite;
 }
 
@@ -155,19 +155,19 @@
 .login-title {
   font-size: 22px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--text-primary);
   margin: 12px 0 4px;
   animation: titleGlow 3s ease-in-out infinite;
 }
 
 @keyframes titleGlow {
   0%, 100% { text-shadow: none; }
-  50% { text-shadow: 0 0 20px rgba(0, 191, 255, 0.3); }
+  50% { text-shadow: 0 0 20px var(--overlay-card); }
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #7A8B9E;
+  color: var(--text-secondary);
 }
 
 .login-icon {
@@ -186,8 +186,8 @@
   height: 140px;
   border-radius: 50%;
   border: 2px solid transparent;
-  border-top-color: #00bfff;
-  border-right-color: #ff3b5c;
+  border-top-color: var(--accent-primary);
+  border-right-color: var(--accent-red);
   animation: ringSpin 4s linear infinite;
 }
 
@@ -209,7 +209,7 @@
 .logo-text {
   font-size: 48px;
   font-weight: 800;
-  background: linear-gradient(135deg, #00bfff, #ff3b5c, #ffcc00);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-red), var(--accent-yellow));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -239,8 +239,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00bfff;
-  box-shadow: 0 0 8px #00bfff;
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
   animation: dotPulse 2s ease-in-out infinite;
 }
 
@@ -250,8 +250,8 @@
 }
 
 @keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 4px #00bfff; }
-  50% { box-shadow: 0 0 12px #00bfff, 0 0 24px rgba(0, 191, 255, 0.3); }
+  0%, 100% { box-shadow: 0 0 4px var(--accent-primary); }
+  50% { box-shadow: 0 0 12px var(--accent-primary), 0 0 24px var(--overlay-card); }
 }
 
 .form-group {
@@ -271,7 +271,7 @@
   align-items: center;
   gap: 6px;
   font-weight: 600;
-  color: #7A8B9E;
+  color: var(--text-secondary);
   margin-bottom: 8px;
   font-size: 13px;
   text-transform: uppercase;
@@ -289,22 +289,22 @@
 .login-card .form-group input {
   width: 100%;
   padding: 14px 16px;
-  background: #0b1329;
+  background: var(--bg-sidebar);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   font-size: 15px;
-  color: #FFFFFF;
+  color: var(--text-primary);
   transition: all 0.3s ease;
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
 }
 
 .login-card .form-group input::placeholder {
-  color: #4A5568;
+  color: var(--text-muted);
 }
 
 .login-card .form-group input:focus {
-  border-color: #00bfff;
+  border-color: var(--accent-primary);
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.12), 0 0 30px rgba(0, 191, 255, 0.08);
 }
@@ -316,7 +316,7 @@
   transform: translateX(-50%);
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #00bfff, #ff3b5c);
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-red));
   border-radius: 2px;
   transition: width 0.3s ease;
   pointer-events: none;
@@ -327,13 +327,13 @@
 }
 
 .login-card .form-group input.error {
-  border-color: #ff3b5c;
+  border-color: var(--accent-red);
   box-shadow: 0 0 0 3px rgba(255, 59, 92, 0.12);
 }
 
 .login-card .form-group small {
   display: block;
-  color: #ff3b5c;
+  color: var(--accent-red);
   margin-top: 6px;
   font-size: 12px;
   animation: shakeIn 0.3s ease-out;
@@ -364,14 +364,14 @@
   cursor: pointer;
   font-size: 16px;
   padding: 6px 8px;
-  color: #7A8B9E;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
 }
 
 .toggle-pass:hover {
   background: rgba(0, 191, 255, 0.1);
-  border-color: #00bfff;
-  color: #00bfff;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
   box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
 }
 
@@ -388,33 +388,33 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #7A8B9E;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
 .remember-me input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #00bfff;
+  accent-color: var(--accent-primary);
   cursor: pointer;
 }
 
 .forgot-password {
   font-size: 13px;
-  color: #00bfff;
+  color: var(--accent-primary);
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .forgot-password:hover {
-  color: #33ccff;
-  text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+  color: var(--accent-primary);
+  text-shadow: 0 0 10px var(--overlay-card);
 }
 
 .login-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #ff3b5c 0%, #ff6b00 100%);
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-orange) 100%);
   background-size: 200% 200%;
   color: white;
   border: none;
@@ -511,7 +511,7 @@
   padding: 14px;
   background: rgba(255, 59, 92, 0.08);
   border: 1px solid rgba(255, 59, 92, 0.2);
-  color: #ff3b5c;
+  color: var(--accent-red);
   border-radius: 10px;
   text-align: center;
   font-size: 14px;
@@ -531,7 +531,7 @@
   padding: 14px;
   background: rgba(255, 204, 0, 0.08);
   border: 1px solid rgba(255, 204, 0, 0.2);
-  color: #ffcc00;
+  color: var(--accent-yellow);
   border-radius: 10px;
   text-align: center;
   font-size: 14px;
@@ -560,6 +560,6 @@
 
 .card-footer p {
   font-size: 12px;
-  color: #4A5568;
+  color: var(--text-muted);
   letter-spacing: 0.3px;
 }

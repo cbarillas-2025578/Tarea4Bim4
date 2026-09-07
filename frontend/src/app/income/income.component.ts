@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { SettingsService } from "../services/settings.service";
 import { IncomeService } from "./services/income.service";
 import { Income, INCOME_SOURCES } from "./models/income.model";
 import { IncomeFormComponent } from "./components/income-form/income-form.component";
@@ -61,6 +62,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private settingsService: SettingsService,
     private incomeService: IncomeService,
     private sanitizer: DomSanitizer
   ) {}
@@ -228,7 +230,11 @@ export class IncomeComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return "Q " + Math.abs(amount).toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.settingsService.formatCurrency(amount);
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 
   formatShortDate(dateStr: string): string {

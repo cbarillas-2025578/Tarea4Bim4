@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { RouterOutlet, Router, NavigationEnd } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { filter, takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { AuthService } from "./services/auth.service";
+import { SettingsService } from "./services/settings.service";
 
 @Component({
   selector: "app-root",
@@ -29,17 +30,19 @@ export class AppComponent implements OnInit, OnDestroy {
   };
 
   menuItems = [
-    { label: 'Inicio', icon: 'home', route: '/dashboard', active: true },
-    { label: 'Gastos', icon: 'expenses', route: '/gastos', active: false },
-    { label: 'Ingresos', icon: 'income', route: '/ingresos', active: false },
-    { label: 'Reportes', icon: 'chart', route: '/reportes', active: false },
-    { label: 'Categorías', icon: 'list', route: '/categorias', active: false },
-    { label: 'Configuración', icon: 'settings', route: '/config', active: false }
+    { labelKey: 'nav.home', icon: 'home', route: '/dashboard', active: true },
+    { labelKey: 'nav.expenses', icon: 'expenses', route: '/gastos', active: false },
+    { labelKey: 'nav.income', icon: 'income', route: '/ingresos', active: false },
+    { labelKey: 'nav.reports', icon: 'chart', route: '/reportes', active: false },
+    { labelKey: 'nav.categories', icon: 'list', route: '/categorias', active: false },
+    { labelKey: 'nav.settings', icon: 'settings', route: '/config', active: false }
   ];
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {}
 
@@ -48,6 +51,12 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
         this.showSidebar = !!user;
+      });
+
+    this.settingsService.settings$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.cdr.detectChanges();
       });
 
     this.router.events
@@ -69,6 +78,10 @@ export class AppComponent implements OnInit, OnDestroy {
     const path = this.iconPaths[name] || '';
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
     return this.sanitizer.bypassSecurityTrustHtml(svg);
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 
   updateActiveMenu(url: string): void {

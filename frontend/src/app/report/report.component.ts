@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { SettingsService } from "../services/settings.service";
 import { ReportService, ReportData } from "./services/report.service";
 
 @Component({
@@ -55,6 +56,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private settingsService: SettingsService,
     private reportService: ReportService
   ) {}
 
@@ -211,7 +213,11 @@ export class ReportComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(amount: number): string {
-    return "Q " + Math.abs(amount).toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.settingsService.formatCurrency(amount);
+  }
+
+  t(key: string): string {
+    return this.settingsService.t(key);
   }
 
   formatNumber(value: number): string {
