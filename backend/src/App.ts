@@ -3,6 +3,8 @@ import cors from "cors";
 import expenseRoutes from "./modules/expense/routes/expense.routes";
 import incomeRoutes from "./modules/income/routes/income.routes";
 import authRoutes from "./modules/auth/auth.routes";
+import categoryRoutes from "./modules/category/routes/category.routes";
+import reportRoutes from "./modules/report/routes/report.routes";
 
 export class App {
   public app: Application;
@@ -31,6 +33,12 @@ export class App {
 
     // Rutas del módulo de ingresos (income)
     this.app.use("/api/incomes", incomeRoutes);
+
+    // Rutas del módulo de categorías (category)
+    this.app.use("/api/categories", categoryRoutes);
+
+    // Rutas del módulo de reportes (report)
+    this.app.use("/api/reports", reportRoutes);
   }
 }
 
