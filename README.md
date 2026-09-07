@@ -1,4 +1,4 @@
-# Control de Ingresos y Gastos
+# Tarea4Bim4 - Control de Ingresos y Gastos
 
 Aplicación full-stack para control de finanzas personales con autenticación de usuarios.
 
@@ -102,3 +102,4 @@ Tablas creadas automáticamente al iniciar (`synchronize: true` en desarrollo):
 - Moneda: Quetzales (GTQ)
 - Tipos de transacción: `income` | `expense`
 - Categorías predefinidas: Salario, Freelance, Inversiones, Alimentación, Transporte, Entretenimiento, Servicios, Otros
+
