@@ -22,4 +22,18 @@ export class AuthController {
       res.status(400).json({ message: 'Error al registrar usuario' });
     }
   }
+
+  async refresh(req: Request, res: Response) {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        res.status(401).json({ message: 'Token requerido' });
+        return;
+      }
+      const result = await this.authService.refresh(token);
+      res.json(result);
+    } catch (error) {
+      res.status(401).json({ message: 'Token inválido o expirado' });
+    }
+  }
 }

@@ -41,4 +41,35 @@ export class AuthService {
     );
     return result.rows[0];
   }
+
+  async refresh(token: string) {
+    try {
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+
+      const result = await pool.query(
+        'SELECT * FROM usuarios WHERE id = $1',
+        [decoded.id]
+      );
+
+      const user = result.rows[0];
+      if (!user) throw new Error('Usuario no encontrado');
+
+      const newToken = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET || 'secret',
+        { expiresIn: '20m' }
+      );
+
+      return {
+        token: newToken,
+        user: {
+          id: user.id,
+          nombre: user.nombre,
+          email: user.email
+        }
+      };
+    } catch {
+      throw new Error('Token inválido');
+    }
+  }
 }
