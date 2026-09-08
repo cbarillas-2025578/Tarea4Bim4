@@ -39,6 +39,8 @@ export class IncomeComponent implements OnInit, OnDestroy {
   showForm = false;
   incomeToEdit: Income | null = null;
 
+  pendingDeleteIncome: Income | null = null;
+
   totalIncome = 0;
   previousMonthTotal = 0;
   trendPercent = 0;
@@ -211,9 +213,20 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.showForm = true;
   }
 
-  deleteIncome(income: Income): void {
-    const confirmed = confirm(`¿Eliminar el ingreso de ${this.formatCurrency(income.amount)} en "${income.source}"?`);
-    if (!confirmed) return;
+  askDelete(income: Income): void {
+    this.pendingDeleteIncome = income;
+    this.showForm = false;
+  }
+
+  cancelDelete(): void {
+    this.pendingDeleteIncome = null;
+  }
+
+  performDelete(): void {
+    const income = this.pendingDeleteIncome;
+    if (!income) return;
+    this.pendingDeleteIncome = null;
+    this.errorMessage = "";
 
     this.incomeService.delete(income.id).pipe(
       takeUntil(this.destroy$)

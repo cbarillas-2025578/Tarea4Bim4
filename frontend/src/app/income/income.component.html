@@ -78,7 +78,7 @@
                   <button class="btn-icon btn-edit" (click)="editIncome(income)" [title]="t('income.edit')">
                     <span [innerHTML]="getIcon('edit')"></span>
                   </button>
-                  <button class="btn-icon btn-delete" (click)="deleteIncome(income)" [title]="t('income.delete')">
+                  <button class="btn-icon btn-delete" (click)="askDelete(income)" [title]="t('income.delete')">
                     <span [innerHTML]="getIcon('trash')"></span>
                   </button>
                 </td>
@@ -140,6 +140,19 @@
             {{ t('income.noIncomesShort') }}
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="pendingDeleteIncome" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-title">{{ t('income.deleteModalTitle') }}</h3>
+      <p class="modal-text">{{ t('income.deleteModalText') }}</p>
+      <p class="modal-target">{{ formatCurrency(pendingDeleteIncome.amount) }} · {{ pendingDeleteIncome.source }}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-keep" (click)="cancelDelete()">{{ t('category.cancel') }}</button>
+        <button type="button" class="btn-danger" (click)="performDelete()">{{ t('income.confirmDelete') }}</button>
       </div>
     </div>
   </div>

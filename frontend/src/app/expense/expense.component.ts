@@ -39,6 +39,8 @@ export class ExpenseComponent implements OnInit, OnDestroy {
   showForm = false;
   expenseToEdit: Expense | null = null;
 
+  pendingDeleteExpense: Expense | null = null;
+
   totalExpense = 0;
   previousMonthTotal = 0;
   trendPercent = 0;
@@ -219,9 +221,20 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     this.showForm = true;
   }
 
-  deleteExpense(expense: Expense): void {
-    const confirmed = confirm(`¿Eliminar el gasto de ${this.formatCurrency(expense.amount)} en "${expense.category}"?`);
-    if (!confirmed) return;
+  askDelete(expense: Expense): void {
+    this.pendingDeleteExpense = expense;
+    this.showForm = false;
+  }
+
+  cancelDelete(): void {
+    this.pendingDeleteExpense = null;
+  }
+
+  performDelete(): void {
+    const expense = this.pendingDeleteExpense;
+    if (!expense) return;
+    this.pendingDeleteExpense = null;
+    this.errorMessage = "";
 
     this.expenseService.delete(expense.id).pipe(
       takeUntil(this.destroy$)

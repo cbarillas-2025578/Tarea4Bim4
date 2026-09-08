@@ -104,7 +104,7 @@
                   <button class="btn-icon btn-edit" (click)="editExpense(expense)" [title]="t('expense.edit')">
                     <span [innerHTML]="getIcon('edit')"></span>
                   </button>
-                  <button class="btn-icon btn-delete" (click)="deleteExpense(expense)" [title]="t('expense.delete')">
+                  <button class="btn-icon btn-delete" (click)="askDelete(expense)" [title]="t('expense.delete')">
                     <span [innerHTML]="getIcon('trash')"></span>
                   </button>
                 </td>
@@ -175,6 +175,19 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="pendingDeleteExpense" (click)="cancelDelete()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-title">{{ t('expense.deleteModalTitle') }}</h3>
+      <p class="modal-text">{{ t('expense.deleteModalText') }}</p>
+      <p class="modal-target">{{ formatCurrency(pendingDeleteExpense.amount) }} · {{ pendingDeleteExpense.category }}</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-keep" (click)="cancelDelete()">{{ t('category.cancel') }}</button>
+        <button type="button" class="btn-danger" (click)="performDelete()">{{ t('expense.confirmDelete') }}</button>
+      </div>
     </div>
   </div>
 </div>
