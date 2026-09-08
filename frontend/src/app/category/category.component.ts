@@ -49,8 +49,13 @@ export class CategoryComponent implements OnInit, OnDestroy {
   sortBy = "recent";
 
   pendingDeleteCategory: Category | null = null;
+  deleteWarning = "";
 
   usageByCategory: { [name: string]: { count: number; total: number } } = {};
+
+  pinned: Set<string> = new Set();
+
+  private readonly PINNED_KEY = "pinned_categories";
 
   constructor(
     private authService: AuthService,
@@ -60,6 +65,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadPinned();
+
     const user = this.authService.getCurrentUser();
     if (user) {
       this.userName = user.nombre || "Usuario";
@@ -129,19 +136,75 @@ export class CategoryComponent implements OnInit, OnDestroy {
       return okType && okName;
     });
 
-    if (this.sortBy === "nameAsc") {
-      list.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (this.sortBy === "nameDesc") {
-      list.sort((a, b) => b.name.localeCompare(a.name));
-    } else {
-      list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
+    list.sort((a, b) => {
+      const aPinned = this.pinned.has(a.name) ? 0 : 1;
+      const bPinned = this.pinned.has(b.name) ? 0 : 1;
+      if (aPinned !== bPinned) return aPinned - bPinned;
+
+      if (this.sortBy === "nameAsc") return a.name.localeCompare(b.name);
+      if (this.sortBy === "nameDesc") return b.name.localeCompare(a.name);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
     return list;
   }
 
+  get maxUsageTotal(): number {
+    return Object.values(this.usageByCategory).reduce((max, u) => Math.max(max, u.total), 0);
+  }
+
+  get topSpending(): { name: string; total: number; icon: string; color: string; percent: number }[] {
+    const maxTotal = this.maxUsageTotal;
+    return this.categories
+      .filter((c) => c.type === "expense" && this.usageByCategory[c.name]?.total > 0)
+      .map((c) => ({
+        name: c.name,
+        total: this.usageByCategory[c.name].total,
+        icon: c.icon,
+        color: c.color,
+        percent: maxTotal > 0 ? Math.round((this.usageByCategory[c.name].total / maxTotal) * 100) : 0,
+      }))
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+  }
+
+  getUsagePercent(category: Category): number {
+    const usage = this.getUsage(category);
+    if (!usage || this.maxUsageTotal <= 0) return 0;
+    return Math.round((usage.total / this.maxUsageTotal) * 100);
+  }
+
   getUsage(category: Category): { count: number; total: number } | null {
     return this.usageByCategory[category.name] || null;
+  }
+
+  isPinned(category: Category): boolean {
+    return this.pinned.has(category.name);
+  }
+
+  togglePin(category: Category): void {
+    if (this.pinned.has(category.name)) {
+      this.pinned.delete(category.name);
+    } else {
+      this.pinned.add(category.name);
+    }
+    try {
+      localStorage.setItem(this.PINNED_KEY, JSON.stringify([...this.pinned]));
+    } catch {
+      /* ignorar error de almacenamiento */
+    }
+  }
+
+  private loadPinned(): void {
+    try {
+      const raw = localStorage.getItem(this.PINNED_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) this.pinned = new Set(arr.filter((n) => typeof n === "string"));
+      }
+    } catch {
+      this.pinned = new Set();
+    }
   }
 
   toggleForm(): void {
@@ -231,6 +294,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   askDelete(category: Category): void {
+    this.deleteWarning = this.getUsage(category)?.count
+      ? this.t("category.cantDeleteInUse")
+      : "";
     this.pendingDeleteCategory = category;
     this.showForm = false;
   }

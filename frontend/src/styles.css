@@ -466,3 +466,116 @@ body {
   box-shadow: 0 0 10px var(--overlay-card);
   flex-shrink: 0;
 }
+
+/* ─── Confirm dialog (modal compartido) ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.modal-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: modalPop 0.3s ease-out;
+}
+
+.modal-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.modal-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.modal-target {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-red);
+  margin: 0 0 20px 0;
+  overflow-wrap: anywhere;
+}
+
+.modal-warning {
+  font-size: 12px;
+  color: var(--accent-yellow);
+  background: rgba(255, 199, 0, 0.12);
+  border: 1px solid rgba(255, 199, 0, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: -8px 0 16px 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-keep {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-keep:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.btn-danger {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-red);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: translateY(15px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

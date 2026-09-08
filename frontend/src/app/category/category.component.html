@@ -56,6 +56,23 @@
       </select>
     </div>
 
+    <div class="card top-spending-card" *ngIf="topSpending.length > 0">
+      <h3>{{ t('category.topBySpending') }}</h3>
+      <div class="top-list">
+        <div class="top-item" *ngFor="let item of topSpending; let i = index">
+          <span class="top-rank">{{ i + 1 }}</span>
+          <span class="top-icon" [style.background]="item.color + '1F'">{{ item.icon }}</span>
+          <div class="top-info">
+            <span class="top-name">{{ item.name }}</span>
+            <div class="top-bar">
+              <span class="top-bar-fill" [style.width.%]="item.percent" [style.background]="item.color"></span>
+            </div>
+          </div>
+          <span class="top-total">{{ formatCurrency(item.total) }}</span>
+        </div>
+      </div>
+    </div>
+
     <div class="category-form-section" *ngIf="showForm">
       <div class="card form-card" [class.editing]="editingCategory">
         <div class="form-header">
@@ -139,8 +156,14 @@
               <span class="usage-count">{{ getUsage(category)?.count }} {{ t('category.uses') }}</span>
               <span class="usage-total" [style.color]="category.color">{{ formatCurrency(getUsage(category)?.total || 0) }}</span>
             </span>
+            <span class="usage-bar" *ngIf="getUsage(category)">
+              <span class="usage-bar-fill" [style.width.%]="getUsagePercent(category)" [style.background]="category.color"></span>
+            </span>
           </div>
           <div class="cat-actions">
+            <button class="btn-icon btn-pin" [class.pinned]="isPinned(category)" (click)="togglePin(category)" [title]="isPinned(category) ? t('category.unpin') : t('category.pin')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M5 17h14M6 17a3 3 0 0 0 3-3v-4a3 3 0 0 0 0-6h1l2-3h1l2 3h1a3 3 0 0 0 0 6v4a3 3 0 0 0 3 3"></path></svg>
+            </button>
             <button class="btn-icon btn-duplicate" (click)="duplicateCategory(category)" [title]="t('category.duplicate')">
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             </button>
@@ -180,6 +203,7 @@
       <h3 class="modal-title">{{ t('category.deleteModalTitle') }}</h3>
       <p class="modal-text">{{ t('category.deleteModalText') }}</p>
       <p class="modal-target">"{{ pendingDeleteCategory.name }}"</p>
+      <p class="modal-warning" *ngIf="deleteWarning">{{ deleteWarning }}</p>
       <div class="modal-actions">
         <button type="button" class="btn-keep" (click)="cancelDelete()">{{ t('category.cancel') }}</button>
         <button type="button" class="btn-danger" (click)="performDelete()">{{ t('category.confirmDelete') }}</button>
