@@ -45,14 +45,14 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
 }
 
 .sidebar-logo-icon .logo-ring {
   position: absolute;
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   border: 2px solid transparent;
   border-top-color: var(--accent-primary);
@@ -68,12 +68,6 @@
   animation: logoPulse 3s ease-in-out infinite;
   position: relative;
   z-index: 1;
-}
-
-body[data-theme="light"] .sidebar-logo-img {
-  mix-blend-mode: multiply;
-  opacity: 1;
-  filter: drop-shadow(0 2px 4px rgba(120, 80, 40, 0.25));
 }
 
 @keyframes ringSpin {
