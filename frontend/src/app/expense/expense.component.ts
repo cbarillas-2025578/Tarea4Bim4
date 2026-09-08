@@ -112,6 +112,10 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  trackByExpense(_index: number, expense: Expense): number {
+    return expense.id;
+  }
+
   loadExpenses(): void {
     this.loading = true;
     this.errorMessage = "";

@@ -104,6 +104,10 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  trackByIncome(_index: number, income: Income): number {
+    return income.id;
+  }
+
   loadIncomes(): void {
     this.loading = true;
     this.errorMessage = "";
