@@ -1,32 +1,53 @@
-<div class="card">
-  <h2>{{ expenseToEdit ? "Editar gasto" : "Registrar nuevo gasto" }}</h2>
+<div class="expense-form-card" [class.editing]="expenseToEdit">
+  <div class="form-header">
+    <h3>{{ expenseToEdit ? 'Editar gasto' : 'Registrar gasto' }}</h3>
+  </div>
 
-  <form (ngSubmit)="submit()" style="display: flex; flex-direction: column; gap: 12px; max-width: 420px;">
-    <label>
-      Monto (Q)
-      <input type="number" step="0.01" min="0" [(ngModel)]="amount" name="amount" required />
-    </label>
+  <form (ngSubmit)="submit()" class="form-body">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+          </span> Monto ({{ currencySymbol }})
+        </label>
+        <input type="number" step="0.01" min="0" [(ngModel)]="amount" name="amount"
+          class="form-input" placeholder="0.00" required />
+      </div>
 
-    <label>
-      Categoría
-      <select [(ngModel)]="category" name="category" required>
-        <option value="" disabled>Selecciona una categoría</option>
-        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-      </select>
-    </label>
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          </span> Categoría
+        </label>
+        <select [(ngModel)]="category" name="category" class="form-input" required>
+          <option value="" disabled>Selecciona una categoría</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+    </div>
 
-    <label>
-      Fecha y hora
-      <input type="datetime-local" [(ngModel)]="transactionDate" name="transactionDate" required />
-    </label>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </span> Fecha y hora
+        </label>
+        <input type="datetime-local" [(ngModel)]="transactionDate" name="transactionDate"
+          class="form-input" required />
+      </div>
+    </div>
 
-    <p *ngIf="errorMessage" style="color: #dc2626; margin: 0;">{{ errorMessage }}</p>
+    <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <div style="display: flex; gap: 8px;">
-      <button type="submit" class="btn-primary">
-        {{ expenseToEdit ? "Guardar cambios" : "Registrar gasto" }}
+    <div class="form-actions">
+      <button type="submit" class="btn-save">
+        <span>{{ expenseToEdit ? 'Guardar cambios' : 'Registrar gasto' }}</span>
+        <span class="btn-arrow">→</span>
       </button>
-      <button type="button" class="btn-secondary" *ngIf="expenseToEdit" (click)="cancel()">
+      <button type="button" class="btn-cancel" *ngIf="expenseToEdit" (click)="cancel()">
         Cancelar
       </button>
     </div>

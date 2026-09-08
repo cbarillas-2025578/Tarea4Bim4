@@ -5,14 +5,14 @@ import { IncomeComponent } from "./income/income.component";
 import { ConfigComponent } from "./config/config.component";
 import { CategoryComponent } from "./category/category.component";
 import { ReportComponent } from "./report/report.component";
-import { EmptyComponent } from "./shared/empty.component";
 import { AuthGuard } from "./guards/auth.guard";
+import { ExpenseComponent } from "./expense/expense.component";
 
 export const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: "gastos", component: EmptyComponent, canActivate: [AuthGuard] },
+  { path: "gastos", component: ExpenseComponent, canActivate: [AuthGuard] },
   { path: "ingresos", component: IncomeComponent, canActivate: [AuthGuard] },
   { path: "reportes", component: ReportComponent, canActivate: [AuthGuard] },
   { path: "categorias", component: CategoryComponent, canActivate: [AuthGuard] },

@@ -3,33 +3,39 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ExpenseService } from "../../services/expense.service";
 import { EXPENSE_CATEGORIES, Expense } from "../../models/expense.model";
+import { SettingsService } from "../../../services/settings.service";
 
 @Component({
   selector: "app-expense-form",
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: "./expense-form.component.html",
+  styleUrls: ["./expense-form.component.css"],
 })
 export class ExpenseFormComponent implements OnChanges {
-  // Si se recibe un gasto, el formulario entra en modo edición
   @Input() expenseToEdit: Expense | null = null;
   @Output() saved = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
 
   categories = EXPENSE_CATEGORIES;
+  currencySymbol = "Q";
 
   amount: number | null = null;
   category = "";
   transactionDate = "";
   errorMessage = "";
 
-  constructor(private expenseService: ExpenseService) {}
+  constructor(
+    private expenseService: ExpenseService,
+    private settingsService: SettingsService
+  ) {
+    this.currencySymbol = this.settingsService.currency;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["expenseToEdit"] && this.expenseToEdit) {
       this.amount = this.expenseToEdit.amount;
       this.category = this.expenseToEdit.category;
-      // input datetime-local espera "YYYY-MM-DDTHH:mm"
       this.transactionDate = this.expenseToEdit.transactionDate.slice(0, 16);
     }
   }

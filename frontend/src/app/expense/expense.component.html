@@ -1,0 +1,180 @@
+<div class="expense-page">
+  <div class="expense-header">
+    <div class="header-left">
+      <h1 class="view-title">{{ t('expense.title') }}</h1>
+    </div>
+    <div class="header-right">
+      <div class="select-pill">
+        <span>{{ t('expense.period') }}</span>
+        <select [(ngModel)]="selectedPeriodMonthIdx" (ngModelChange)="onPeriodChange()">
+          <option *ngFor="let m of monthNames; let i = index" [ngValue]="i">{{ m }}</option>
+        </select>
+        <span>/</span>
+        <select [(ngModel)]="selectedPeriodYear" (ngModelChange)="onPeriodChange()">
+          <option *ngFor="let y of yearOptions" [ngValue]="y">{{ y }}</option>
+        </select>
+      </div>
+      <div class="user-profile">
+        <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
+        <div class="avatar">{{ userInitials }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="left-column">
+      <button class="btn-new-expense" (click)="toggleForm()">
+        <span class="btn-plus">+</span> {{ t('expense.newExpense') }}
+      </button>
+
+      <div class="card total-card neon-box">
+        <span class="card-label">{{ t('expense.totalMonth') }}</span>
+        <div class="total-amount">{{ formatCurrency(totalExpense) }}</div>
+        <div class="trend-badge" [class.trend-positive]="trendPercent >= 0" [class.trend-negative]="trendPercent < 0">
+          <span class="trend-arrow">{{ trendPercent >= 0 ? '&#8593;' : '&#8595;' }}</span>
+          {{ trendPercent >= 0 ? '+' : '' }}{{ trendPercent }}% {{ t('expense.vsPrevMonth') }}
+        </div>
+      </div>
+
+      <div class="expense-form-section" *ngIf="showForm">
+        <app-expense-form
+          [expenseToEdit]="expenseToEdit"
+          (saved)="onSaved()"
+          (cancelled)="cancelForm()">
+        </app-expense-form>
+      </div>
+
+      <div class="card budget-card">
+        <div class="budget-head">
+          <span class="budget-label">{{ t('expense.monthBudget') }}</span>
+          <div class="budget-head-right">
+            <span class="budget-amount">{{ formatCurrency(monthlyBudget) }}</span>
+            <button class="btn-edit-budget" *ngIf="!editingBudget" (click)="startEditBudget()" [title]="t('expense.edit')">
+              <span [innerHTML]="getIcon('edit')"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="budget-edit" *ngIf="editingBudget">
+          <div class="budget-edit-row">
+            <input type="number" min="0" step="0.01" class="budget-input" [(ngModel)]="budgetInput" placeholder="0.00" />
+            <button class="btn-budget-save" (click)="saveBudget()">OK</button>
+            <button class="btn-budget-cancel" (click)="cancelEditBudget()">✕</button>
+          </div>
+        </div>
+
+        <div class="budget-bar" *ngIf="!editingBudget">
+          <div class="budget-fill" [style.width.%]="budgetUsedPercent" [style.background]="budgetBarColor"></div>
+        </div>
+        <div class="budget-meta" *ngIf="!editingBudget">
+          <span>{{ t('expense.used') }} {{ budgetUsedPercent }}%</span>
+          <span>{{ t('expense.remaining') }}: {{ formatCurrency(budgetRemaining) }}</span>
+        </div>
+      </div>
+
+      <div class="card history-card">
+        <h3>{{ t('expense.history') }}</h3>
+
+        <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <div class="loading-state" *ngIf="loading">
+          <div class="spinner"></div>
+          <span>{{ t('expense.loading') }}</span>
+        </div>
+
+        <div class="table-wrapper" *ngIf="!loading && expenses.length > 0">
+          <table class="expense-table">
+            <thead>
+              <tr>
+                <th>{{ t('expense.category') }}</th>
+                <th>{{ t('expense.date') }}</th>
+                <th>{{ t('expense.amount') }}</th>
+                <th class="text-center">{{ t('expense.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let expense of expenses; let i = index" class="table-row"
+                [style.animation-delay]="(i * 0.05) + 's'">
+                <td>
+                  <span class="category-badge">{{ expense.category }}</span>
+                </td>
+                <td class="cell-date">{{ formatShortDate(expense.transactionDate) }}</td>
+                <td class="cell-amount">-{{ formatCurrency(expense.amount) }}</td>
+                <td class="cell-actions">
+                  <button class="btn-icon btn-edit" (click)="editExpense(expense)" [title]="t('expense.edit')">
+                    <span [innerHTML]="getIcon('edit')"></span>
+                  </button>
+                  <button class="btn-icon btn-delete" (click)="deleteExpense(expense)" [title]="t('expense.delete')">
+                    <span [innerHTML]="getIcon('trash')"></span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot *ngIf="expenses.length > 0">
+              <tr>
+                <td colspan="2"><strong>{{ t('expense.total') }}</strong></td>
+                <td><strong class="cell-amount">-{{ formatCurrency(totalExpense) }}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && expenses.length === 0">
+          <div class="empty-icon-box">
+            <span class="empty-icon-q">Q</span>
+          </div>
+          <p class="empty-text">{{ t('expense.noExpenses') }}</p>
+          <p class="empty-subtext">{{ t('expense.noExpensesHint') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="select-pill-sm">
+        <span>{{ monthNames[selectedPeriodMonthIdx] }} {{ selectedPeriodYear }}</span>
+      </div>
+
+      <div class="card chart-card">
+        <h3>{{ t('expense.byCategory') }}</h3>
+
+        <div class="donut-chart-wrapper">
+          <svg viewBox="0 0 200 200" class="donut-svg">
+            <defs>
+              <filter id="glowDonutExp" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--bg-raised)" stroke-width="20" />
+            <circle *ngFor="let seg of donutSegments" cx="100" cy="100" r="80" fill="none"
+              [attr.stroke]="seg.color" stroke-width="20"
+              [attr.stroke-dasharray]="seg.dash" [attr.stroke-dashoffset]="seg.offset"
+              transform="rotate(-90 100 100)" class="donut-segment" [style.animation-delay]="seg.delay" />
+            <text x="100" y="95" text-anchor="middle" fill="var(--text-primary)" font-size="20" font-weight="700">
+              {{ formatCurrency(donutTotal) }}
+            </text>
+            <text x="100" y="115" text-anchor="middle" fill="var(--text-secondary)" font-size="10">{{ t('expense.total') }}</text>
+          </svg>
+        </div>
+
+        <div class="chart-legend" *ngIf="categoryTotals.length > 0">
+          <div class="legend-item" *ngFor="let cat of categoryTotals">
+            <span class="dot" [style.background]="cat.color"></span>
+            <span class="legend-text">{{ cat.name }}</span>
+            <span class="legend-percent">{{ cat.percent }}%</span>
+          </div>
+        </div>
+        <div class="chart-legend" *ngIf="categoryTotals.length === 0">
+          <div class="legend-item empty-legend">
+            {{ t('expense.noExpensesShort') }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
