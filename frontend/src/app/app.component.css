@@ -47,10 +47,9 @@
   mix-blend-mode: screen;
 }
 
-@media (prefers-color-scheme: light) {
-  body[data-theme="light"] .sidebar-logo-img {
-    mix-blend-mode: multiply;
-  }
+body[data-theme="light"] .sidebar-logo-img {
+  mix-blend-mode: multiply;
+  opacity: 1;
 }
 
 .brand-name {
