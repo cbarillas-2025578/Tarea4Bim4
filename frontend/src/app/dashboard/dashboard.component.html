@@ -61,9 +61,9 @@
                 </feMerge>
               </filter>
             </defs>
-            <polygon fill="url(#gradientIncome)" [attr.points]="chartIncomeArea" />
+            <path fill="url(#gradientIncome)" [attr.d]="chartIncomeArea" />
             <path fill="none" stroke="var(--accent-primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartIncomePath" filter="url(#glowLine)" />
-            <polygon fill="url(#gradientExpense)" [attr.points]="chartExpenseArea" />
+            <path fill="url(#gradientExpense)" [attr.d]="chartExpenseArea" />
             <path fill="none" stroke="var(--accent-red)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartExpensePath" filter="url(#glowLine)" />
             <circle *ngFor="let dot of chartIncomeDots; let i = index"
               [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="var(--accent-primary)" class="dot-animate"

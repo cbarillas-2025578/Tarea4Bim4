@@ -219,32 +219,56 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.chartIncomePoints = incPoints.join(' ');
     this.chartExpensePoints = expPoints.join(' ');
-    this.chartIncomeArea = `${incPoints.join(' ')} ${svgWidth},${svgHeight} 0,${svgHeight}`;
-    this.chartExpenseArea = `${expPoints.join(' ')} ${svgWidth},${svgHeight} 0,${svgHeight}`;
 
     const incCoords = data.map((d, i) => ({ x: i * stepX, y: toY(d.income) }));
     const expCoords = data.map((d, i) => ({ x: i * stepX, y: toY(d.expense) }));
     this.chartIncomePath = this.computeBezierPath(incCoords);
     this.chartExpensePath = this.computeBezierPath(expCoords);
+    this.chartIncomeArea = `${this.chartIncomePath} L ${svgWidth},${svgHeight} L 0,${svgHeight} Z`;
+    this.chartExpenseArea = `${this.chartExpensePath} L ${svgWidth},${svgHeight} L 0,${svgHeight} Z`;
 
     this.chartIncomeDots = data.map((d, i) => ({ cx: i * stepX, cy: toY(d.income) }));
     this.chartExpenseDots = data.map((d, i) => ({ cx: i * stepX, cy: toY(d.expense) }));
   }
 
   private computeBezierPath(points: { x: number; y: number }[]): string {
-    if (points.length < 2) return '';
+    const n = points.length;
+    if (n < 2) return '';
+    if (n === 2) return `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y}`;
+
+    // Interpolación cúbica monótona (Fritsch-Carlson) para evitar
+    // torceduras/overshoot cuando varios meses tienen valores cercanos.
+    const h: number[] = [];
+    const s: number[] = [];
+    for (let i = 0; i < n - 1; i++) {
+      h.push(points[i + 1].x - points[i].x);
+      s.push((points[i + 1].y - points[i].y) / h[i]);
+    }
+
+    // Tangentes (derivadas) en cada punto, respetando la monotonicidad
+    const m: number[] = new Array(n).fill(0);
+    m[0] = s[0];
+    m[n - 1] = s[n - 2];
+    for (let i = 1; i < n - 1; i++) {
+      if (s[i - 1] * s[i] <= 0) {
+        m[i] = 0;
+      } else {
+        m[i] = 3 * (h[i - 1] + h[i]) /
+          ((h[i - 1] + 2 * h[i]) / s[i - 1] + (2 * h[i - 1] + h[i]) / s[i]);
+      }
+    }
+
+    // Construir path Bezier cúbico con las tangentes monótonas
+    const t = 1 / 3;
     let d = `M ${points[0].x},${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[Math.max(0, i - 1)];
+    for (let i = 0; i < n - 1; i++) {
       const p1 = points[i];
       const p2 = points[i + 1];
-      const p3 = points[Math.min(points.length - 1, i + 2)];
-      const tension = 0.3;
-      const cp1x = p1.x + (p2.x - p0.x) * tension;
-      const cp1y = p1.y + (p2.y - p0.y) * tension;
-      const cp2x = p2.x - (p3.x - p1.x) * tension;
-      const cp2y = p2.y - (p3.y - p1.y) * tension;
-      d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+      const c1x = p1.x + h[i] * t;
+      const c1y = p1.y + m[i] * h[i] * t;
+      const c2x = p2.x - h[i] * t;
+      const c2y = p2.y - m[i + 1] * h[i] * t;
+      d += ` C ${c1x},${c1y} ${c2x},${c2y} ${p2.x},${p2.y}`;
     }
     return d;
   }
