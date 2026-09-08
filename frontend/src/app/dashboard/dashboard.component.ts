@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   currentMonth = 'Agosto 2026';
   userName = 'Benjamin';
-  userInitials = 'BE';
+  userInitials = 'US';
 
   kpis: KpiCard[] = [
     { title: 'Ingresos', amount: 0, color: '#00A3FF', icon: '' },

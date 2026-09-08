@@ -86,21 +86,6 @@
   color: var(--text-primary);
 }
 
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--gradient-logo);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  box-shadow: 0 0 12px var(--overlay-card);
-}
-
 .kpi-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

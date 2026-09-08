@@ -74,20 +74,6 @@
   color: var(--text-primary);
 }
 
-.avatar {
-  background-color: var(--accent-primary);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 12px;
-  color: #FFFFFF;
-  box-shadow: 0 0 10px var(--overlay-card);
-}
-
 /* ─── Content Grid ─── */
 .content-grid {
   display: grid;
