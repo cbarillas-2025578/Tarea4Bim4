@@ -141,6 +141,10 @@ export class ConfigComponent implements OnInit, OnDestroy {
     this.showSaved(this.t("config.resetDone"));
   }
 
+  closeToast(): void {
+    this.savedMessage = "";
+  }
+
   private showSaved(msg: string): void {
     this.savedMessage = msg;
     if (msg) {
