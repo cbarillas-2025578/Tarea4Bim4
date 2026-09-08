@@ -64,7 +64,6 @@
   width: 110px;
   height: 110px;
   object-fit: contain;
-  mix-blend-mode: screen;
   animation: logoPulse 3s ease-in-out infinite;
   position: relative;
   z-index: 1;
