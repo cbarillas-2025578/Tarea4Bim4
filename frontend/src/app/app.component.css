@@ -40,9 +40,22 @@
   padding: 0 8px;
 }
 
+.logo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow), 0 0 0 4px var(--overlay-card) inset;
+  overflow: hidden;
+}
+
 .sidebar-logo-img {
-  width: 180px;
-  height: 180px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
   mix-blend-mode: screen;
 }
@@ -50,6 +63,7 @@
 body[data-theme="light"] .sidebar-logo-img {
   mix-blend-mode: multiply;
   opacity: 1;
+  filter: drop-shadow(0 2px 4px rgba(120, 80, 40, 0.25));
 }
 
 .brand-name {
