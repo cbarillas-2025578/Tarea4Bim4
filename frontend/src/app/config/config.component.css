@@ -105,6 +105,22 @@
   gap: 20px;
 }
 
+.avatar-big {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gradient-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 16px var(--overlay-card);
+  flex-shrink: 0;
+}
+
 .profile-fields {
   display: flex;
   flex-direction: column;
