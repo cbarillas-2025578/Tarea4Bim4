@@ -55,7 +55,7 @@ interface ExpenseRecord {
 export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  currentMonth = 'Agosto 2026';
+  currentMonth = '';
   userName = 'Benjamin';
   userInitials = 'US';
 
@@ -128,6 +128,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData(): void {
+    this.fillCurrentMonth();
     const currentYear = new Date().getFullYear();
 
     forkJoin({
@@ -148,6 +149,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.warn('Error loading dashboard data:', err);
       }
     });
+  }
+
+  private fillCurrentMonth(): void {
+    const fullMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const now = new Date();
+    this.currentMonth = `${fullMonths[now.getMonth()]} ${now.getFullYear()}`;
   }
 
   private computeKPIs(): void {
