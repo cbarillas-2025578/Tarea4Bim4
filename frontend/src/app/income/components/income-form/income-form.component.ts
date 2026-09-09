@@ -31,7 +31,8 @@ export class IncomeFormComponent implements OnChanges {
       this.amount = this.incomeToEdit.amount;
       this.source = this.incomeToEdit.source;
       this.description = this.incomeToEdit.description;
-      this.transactionDate = this.incomeToEdit.transactionDate.slice(0, 16);
+      const raw = this.incomeToEdit.transactionDate;
+      this.transactionDate = raw ? String(raw).slice(0, 16) : "";
     }
   }
 

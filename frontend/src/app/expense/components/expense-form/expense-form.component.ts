@@ -36,7 +36,8 @@ export class ExpenseFormComponent implements OnChanges {
     if (changes["expenseToEdit"] && this.expenseToEdit) {
       this.amount = this.expenseToEdit.amount;
       this.category = this.expenseToEdit.category;
-      this.transactionDate = this.expenseToEdit.transactionDate.slice(0, 16);
+      const raw = this.expenseToEdit.transactionDate;
+      this.transactionDate = raw ? String(raw).slice(0, 16) : "";
     }
   }
 
