@@ -105,25 +105,6 @@ export class ExpenseComponent implements OnInit, OnDestroy {
       });
 
     this.loadExpenses();
-
-    setTimeout(() => this.installClickDiagnostics(), 800);
-  }
-
-  private installClickDiagnostics(): void {
-    const marker = (ev: MouseEvent) => {
-      const t = ev.target as HTMLElement;
-      if (!t || !t.closest) return;
-      if (!t.closest(".expense-page")) return;
-      const btn = t.closest("button");
-      console.log(
-        `[dbg ${ev.type}] target="${t.tagName}.${String(t.className)}"` +
-        (btn ? ` btn="${btn.title || btn.className.split(" ")[1] || ""}"` : "") +
-        (t.closest(".category-badge") ? " BADGE" : "")
-      );
-    };
-    document.addEventListener("mousedown", marker);
-    document.addEventListener("mouseup", marker);
-    document.addEventListener("click", marker);
   }
 
   ngOnDestroy(): void {
@@ -240,13 +221,11 @@ export class ExpenseComponent implements OnInit, OnDestroy {
   }
 
   editExpense(expense: Expense): void {
-    console.log("[dbg-expense] editExpense id=", expense.id);
     this.expenseToEdit = { ...expense };
     this.showForm = true;
   }
 
   askDelete(expense: Expense): void {
-    console.log("[dbg-expense] askDelete id=", expense.id);
     this.pendingDeleteExpense = expense;
     this.showForm = false;
   }
