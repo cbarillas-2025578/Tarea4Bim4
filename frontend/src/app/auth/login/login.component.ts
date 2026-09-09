@@ -35,13 +35,13 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Leer el flag de expiración de forma fiable
     if (this.route.snapshot.queryParamMap.has('sessionExpired')) {
-      this.infoMessage = 'Tu sesión ha expirado. El token venció después de 2 minutos, por favor inicia sesión nuevamente.';
+      this.infoMessage = 'Su sesión ha expirado. El token venció después de 2 minutos, por favor inicia sesión nuevamente.';
     }
 
     // Reaccionar si la expiración ocurre mientras ya estamos en el login
     this.route.queryParamMap.subscribe(params => {
       if (params.has('sessionExpired')) {
-        this.infoMessage = 'Tu sesión ha expirado. El token venció después de 2 minutos, por favor inicia sesión nuevamente.';
+        this.infoMessage = 'Su sesión ha expirado. El token venció después de 2 minutos, por favor inicia sesión nuevamente.';
       }
     });
   }
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = 'Credenciales incorrectas. Por favor, intenta de nuevo.';
+          this.errorMessage = 'Credenciales incorrectas. Por favor, intente de nuevo.';
         }
       });
     }
