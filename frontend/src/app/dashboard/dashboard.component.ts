@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { Router, NavigationEnd } from '@angular/router';
@@ -48,7 +49,7 @@ interface ExpenseRecord {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -56,6 +57,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   currentMonth = '';
+  selectedMonth = 0;
+  selectedYear = 0;
+  selectedPeriodMonthIdx = 0;
+  selectedPeriodYear = 0;
+  monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  yearOptions: number[] = [];
   userName = 'Benjamin';
   userInitials = 'US';
 
@@ -79,6 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chartExpenseDots: { cx: number; cy: number }[] = [];
   chartYLabels: string[] = [];
   chartXLabels: string[] = [];
+  chartSelectedX: number | null = null;
 
   donutTotal = 0;
   donutSegments: { color: string; dash: string; offset: string; delay: string }[] = [];
@@ -102,6 +113,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const now = new Date();
+    this.selectedPeriodMonthIdx = now.getMonth();
+    this.selectedPeriodYear = now.getFullYear();
+
+    this.yearOptions = [];
+    for (let y = now.getFullYear(); y >= now.getFullYear() - 4; y--) {
+      this.yearOptions.push(y);
+    }
+
     const user = this.authService.getCurrentUser();
     if (user) {
       this.userName = user.nombre || 'Benjamin';
@@ -128,22 +148,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData(): void {
+    this.selectedMonth = this.selectedPeriodMonthIdx;
+    this.selectedYear = this.selectedPeriodYear;
     this.fillCurrentMonth();
-    const currentYear = new Date().getFullYear();
 
     forkJoin({
-      incomes: this.incomeService.getAll({ year: currentYear }),
+      incomes: this.incomeService.getAll(),
       expenses: this.http.get<ExpenseRecord[]>(`${environment.apiUrl}/expenses`)
     }).subscribe({
       next: ({ incomes, expenses }) => {
         this.allIncomes = incomes;
         this.allExpenses = expenses;
 
-        this.computeKPIs();
-        this.computeMonthlyData(currentYear);
-        this.computeChart();
-        this.computeDonut();
-        this.computeRecentTransactions();
+        this.recomputeAll();
       },
       error: (err) => {
         console.warn('Error loading dashboard data:', err);
@@ -151,15 +168,63 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPeriodChange(): void {
+    this.loadDashboardData();
+  }
+
+  private recomputeAll(): void {
+    this.computeKPIs();
+    this.computeMonthlyData(this.selectedYear);
+    this.computeChart();
+    this.computeDonut();
+    this.computeRecentTransactions();
+  }
+
   private fillCurrentMonth(): void {
     const fullMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    const now = new Date();
-    this.currentMonth = `${fullMonths[now.getMonth()]} ${now.getFullYear()}`;
+    this.currentMonth = `${fullMonths[this.selectedMonth]} ${this.selectedYear}`;
+  }
+
+  prevMonth(): void {
+    this.selectedMonth--;
+    if (this.selectedMonth < 0) {
+      this.selectedMonth = 11;
+      this.selectedYear--;
+    }
+    this.selectedPeriodMonthIdx = this.selectedMonth;
+    this.selectedPeriodYear = this.selectedYear;
+    this.fillCurrentMonth();
+    this.recomputeAll();
+  }
+
+  nextMonth(): void {
+    this.selectedMonth++;
+    if (this.selectedMonth > 11) {
+      this.selectedMonth = 0;
+      this.selectedYear++;
+    }
+    this.selectedPeriodMonthIdx = this.selectedMonth;
+    this.selectedPeriodYear = this.selectedYear;
+    this.fillCurrentMonth();
+    this.recomputeAll();
   }
 
   private computeKPIs(): void {
-    const totalIncome = this.allIncomes.reduce((sum, i) => sum + i.amount, 0);
-    const totalExpenses = this.allExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const month = this.selectedMonth;
+    const year = this.selectedYear;
+
+    const monthlyIncomes = this.allIncomes.filter(i => {
+      const d = new Date(i.transactionDate);
+      return d.getMonth() === month && d.getFullYear() === year;
+    });
+
+    const monthlyExpenses = this.allExpenses.filter(e => {
+      const d = new Date(e.transactionDate);
+      return d.getMonth() === month && d.getFullYear() === year;
+    });
+
+    const totalIncome = monthlyIncomes.reduce((sum, i) => sum + i.amount, 0);
+    const totalExpenses = monthlyExpenses.reduce((sum, e) => sum + e.amount, 0);
 
     this.kpis = [
       { title: 'Ingresos', amount: totalIncome, color: '#00A3FF', icon: '' },
@@ -236,6 +301,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.chartIncomeDots = data.map((d, i) => ({ cx: i * stepX, cy: toY(d.income) }));
     this.chartExpenseDots = data.map((d, i) => ({ cx: i * stepX, cy: toY(d.expense) }));
+
+    this.chartSelectedX = data.length > 1 ? this.selectedMonth * stepX : null;
   }
 
   private computeBezierPath(points: { x: number; y: number }[]): string {
@@ -281,12 +348,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private computeDonut(): void {
+    const month = this.selectedMonth;
+    const year = this.selectedYear;
     const colors = ['#00A3FF', '#FF3B5C', '#FFC700', '#FF6B00', '#A855F7', '#10B981'];
     const categoryMap: { [key: string]: number } = {};
 
     this.allExpenses.forEach(exp => {
-      const cat = exp.category || 'Otros';
-      categoryMap[cat] = (categoryMap[cat] || 0) + exp.amount;
+      const d = new Date(exp.transactionDate);
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        const cat = exp.category || 'Otros';
+        categoryMap[cat] = (categoryMap[cat] || 0) + exp.amount;
+      }
     });
 
     const total = Object.values(categoryMap).reduce((s, v) => s + v, 0);
@@ -320,28 +392,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private computeRecentTransactions(): void {
+    const month = this.selectedMonth;
+    const year = this.selectedYear;
     const txs: Transaction[] = [];
 
     this.allIncomes.forEach(inc => {
       const d = new Date(inc.transactionDate);
-      txs.push({
-        name: inc.source,
-        category: 'Ingresos',
-        amount: inc.amount,
-        date: this.formatShortDate(d),
-        sortDate: d
-      });
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        txs.push({
+          name: inc.source,
+          category: 'Ingresos',
+          amount: inc.amount,
+          date: this.formatShortDate(d),
+          sortDate: d
+        });
+      }
     });
 
     this.allExpenses.forEach(exp => {
       const d = new Date(exp.transactionDate);
-      txs.push({
-        name: exp.category || 'Gasto',
-        category: exp.category || 'Gastos',
-        amount: -exp.amount,
-        date: this.formatShortDate(d),
-        sortDate: d
-      });
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        txs.push({
+          name: exp.category || 'Gasto',
+          category: exp.category || 'Gastos',
+          amount: -exp.amount,
+          date: this.formatShortDate(d),
+          sortDate: d
+        });
+      }
     });
 
     txs.sort((a, b) => b.sortDate.getTime() - a.sortDate.getTime());

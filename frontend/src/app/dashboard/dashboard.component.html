@@ -11,7 +11,16 @@
           <div class="user-avatar">{{ userInitials }}</div>
         </div>
         <div class="month-selector">
+          <button class="month-nav-btn" (click)="prevMonth()">‹</button>
           <span>{{ currentMonth }}</span>
+          <button class="month-nav-btn" (click)="nextMonth()">›</button>
+          <select class="month-select" [(ngModel)]="selectedPeriodMonthIdx" (ngModelChange)="onPeriodChange()">
+            <option *ngFor="let m of monthNames; let i = index" [ngValue]="i">{{ m }}</option>
+          </select>
+          <span>/</span>
+          <select class="month-select" [(ngModel)]="selectedPeriodYear" (ngModelChange)="onPeriodChange()">
+            <option *ngFor="let y of yearOptions" [ngValue]="y">{{ y }}</option>
+          </select>
         </div>
       </div>
     </div>
@@ -65,6 +74,8 @@
             <path fill="none" stroke="var(--accent-primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartIncomePath" filter="url(#glowLine)" />
             <path fill="url(#gradientExpense)" [attr.d]="chartExpenseArea" />
             <path fill="none" stroke="var(--accent-red)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" [attr.d]="chartExpensePath" filter="url(#glowLine)" />
+            <line *ngIf="chartSelectedX !== null" [attr.x1]="chartSelectedX" [attr.x2]="chartSelectedX" y1="0" y2="200"
+              stroke="var(--accent-primary)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.45" />
             <circle *ngFor="let dot of chartIncomeDots; let i = index"
               [attr.cx]="dot.cx" [attr.cy]="dot.cy" r="4" fill="var(--accent-primary)" class="dot-animate"
               [style.animation-delay]="(i * 0.1) + 's'" />

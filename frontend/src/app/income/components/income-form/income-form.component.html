@@ -46,7 +46,7 @@
           </span> Fecha y hora
         </label>
         <input type="datetime-local" [(ngModel)]="transactionDate" name="transactionDate"
-          class="form-input" required />
+          class="form-input" [max]="maxDate" required />
       </div>
     </div>
 

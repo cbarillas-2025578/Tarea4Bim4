@@ -23,8 +23,18 @@ export class IncomeFormComponent implements OnChanges {
   description = "";
   transactionDate = "";
   errorMessage = "";
+  maxDate = "";
 
-  constructor(private incomeService: IncomeService) {}
+  constructor(private incomeService: IncomeService) {
+    this.maxDate = this.getEndOfTodayLocal();
+  }
+
+  private getEndOfTodayLocal(): string {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const local = new Date(now.getTime() - offset * 60000);
+    return `${local.toISOString().slice(0, 10)}T23:59`;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["incomeToEdit"] && this.incomeToEdit) {
@@ -41,6 +51,11 @@ export class IncomeFormComponent implements OnChanges {
 
     if (!this.amount || this.amount <= 0 || !this.source || !this.transactionDate) {
       this.errorMessage = "Completa monto, fuente y fecha antes de guardar.";
+      return;
+    }
+
+    if (this.transactionDate > this.maxDate) {
+      this.errorMessage = "No puedes ingresar una fecha futura.";
       return;
     }
 

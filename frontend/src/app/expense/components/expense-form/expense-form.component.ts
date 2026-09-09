@@ -24,12 +24,21 @@ export class ExpenseFormComponent implements OnChanges {
   category = "";
   transactionDate = "";
   errorMessage = "";
+  maxDate = "";
 
   constructor(
     private expenseService: ExpenseService,
     private settingsService: SettingsService
   ) {
     this.currencySymbol = this.settingsService.currency;
+    this.maxDate = this.getEndOfTodayLocal();
+  }
+
+  private getEndOfTodayLocal(): string {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const local = new Date(now.getTime() - offset * 60000);
+    return `${local.toISOString().slice(0, 10)}T23:59`;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -46,6 +55,11 @@ export class ExpenseFormComponent implements OnChanges {
 
     if (!this.amount || this.amount <= 0 || !this.category || !this.transactionDate) {
       this.errorMessage = "Completa monto, categoría y fecha antes de guardar.";
+      return;
+    }
+
+    if (this.transactionDate > this.maxDate) {
+      this.errorMessage = "No puedes ingresar una fecha futura.";
       return;
     }
 
