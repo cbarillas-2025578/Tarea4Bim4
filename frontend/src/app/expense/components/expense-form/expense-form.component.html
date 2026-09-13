@@ -42,6 +42,10 @@
 
     <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
 
+    <p class="balance-hint" *ngIf="balanceChecked && availableBalance >= 0">
+      Saldo disponible: {{ formatCurrency(availableBalance) }}
+    </p>
+
     <div class="form-actions">
       <button type="submit" class="btn-save">
         <span>{{ expenseToEdit ? 'Guardar cambios' : 'Registrar gasto' }}</span>

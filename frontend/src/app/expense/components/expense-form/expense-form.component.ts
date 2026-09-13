@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { forkJoin } from "rxjs";
 import { ExpenseService } from "../../services/expense.service";
 import { EXPENSE_CATEGORIES, Expense } from "../../models/expense.model";
+import { IncomeService } from "../../../income/services/income.service";
 import { SettingsService } from "../../../services/settings.service";
 
 @Component({
@@ -12,7 +14,7 @@ import { SettingsService } from "../../../services/settings.service";
   templateUrl: "./expense-form.component.html",
   styleUrls: ["./expense-form.component.css"],
 })
-export class ExpenseFormComponent implements OnChanges {
+export class ExpenseFormComponent implements OnInit, OnChanges {
   @Input() expenseToEdit: Expense | null = null;
   @Output() saved = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
@@ -26,12 +28,42 @@ export class ExpenseFormComponent implements OnChanges {
   errorMessage = "";
   maxDate = "";
 
+  private totalIncome = 0;
+  private totalExpenses = 0;
+  balanceChecked = false;
+
   constructor(
     private expenseService: ExpenseService,
+    private incomeService: IncomeService,
     private settingsService: SettingsService
   ) {
     this.currencySymbol = this.settingsService.currency;
     this.maxDate = this.getEndOfTodayLocal();
+  }
+
+  ngOnInit(): void {
+    this.loadBalance();
+  }
+
+  private loadBalance(): void {
+    forkJoin({
+      incomes: this.incomeService.getAll(),
+      expenses: this.expenseService.getAll(),
+    }).subscribe({
+      next: ({ incomes, expenses }) => {
+        this.totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
+        this.totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+        this.balanceChecked = true;
+      },
+      error: () => {
+        this.balanceChecked = false;
+      },
+    });
+  }
+
+  get availableBalance(): number {
+    const editingAmount = this.expenseToEdit ? this.expenseToEdit.amount : 0;
+    return this.totalIncome - (this.totalExpenses - editingAmount);
   }
 
   private getEndOfTodayLocal(): string {
@@ -63,6 +95,16 @@ export class ExpenseFormComponent implements OnChanges {
       return;
     }
 
+    if (
+      !this.balanceChecked ||
+      (this.amount !== null && this.amount > this.availableBalance)
+    ) {
+      this.errorMessage = this.balanceChecked
+        ? "Saldo insuficiente."
+        : "No se pudo verificar el saldo disponible.";
+      return;
+    }
+
     const payload = {
       amount: this.amount,
       category: this.category,
@@ -76,6 +118,7 @@ export class ExpenseFormComponent implements OnChanges {
     request$.subscribe({
       next: () => {
         this.resetForm();
+        this.loadBalance();
         this.saved.emit();
       },
       error: () => {
@@ -87,6 +130,10 @@ export class ExpenseFormComponent implements OnChanges {
   cancel(): void {
     this.resetForm();
     this.cancelled.emit();
+  }
+
+  formatCurrency(amount: number): string {
+    return this.settingsService.formatCurrency(amount);
   }
 
   private resetForm(): void {

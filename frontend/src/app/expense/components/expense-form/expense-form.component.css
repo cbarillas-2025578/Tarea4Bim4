@@ -115,6 +115,16 @@ select.form-input option {
   border: 1px solid rgba(255, 59, 92, 0.2);
 }
 
+.balance-hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 0;
+  padding: 8px 12px;
+  background: rgba(255, 199, 0, 0.08);
+  border: 1px solid rgba(255, 199, 0, 0.2);
+  border-radius: 6px;
+}
+
 .form-actions {
   display: flex;
   gap: 12px;
