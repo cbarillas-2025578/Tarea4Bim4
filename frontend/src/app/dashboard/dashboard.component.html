@@ -151,7 +151,7 @@
             </div>
           </div>
           <span class="tx-amount" [class.tx-positive]="tx.amount > 0" [class.tx-negative]="tx.amount < 0">
-            {{ formatCurrency(tx.amount) }}
+            {{ formatCurrency(abs(tx.amount)) }}
           </span>
           <span class="tx-date">{{ tx.date }}</span>
         </div>
