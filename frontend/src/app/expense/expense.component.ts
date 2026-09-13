@@ -309,6 +309,10 @@ export class ExpenseComponent implements OnInit, OnDestroy {
     return this.settingsService.formatCurrency(amount);
   }
 
+  abs(n: number): number {
+    return Math.abs(n);
+  }
+
   t(key: string): string {
     return this.settingsService.t(key);
   }
