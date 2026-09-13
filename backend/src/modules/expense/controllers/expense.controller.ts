@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { expenseService } from "../services/expense.service";
+import { incomeService } from "../../income/services/income.service";
 
 export class ExpenseController {
   async create(req: Request, res: Response): Promise<void> {
@@ -12,6 +13,16 @@ export class ExpenseController {
       }
       if (typeof amount !== "number" || amount <= 0) {
         res.status(400).json({ message: "amount debe ser un número positivo" });
+        return;
+      }
+
+      const [totalIncome, totalExpenses] = await Promise.all([
+        incomeService.sum(),
+        expenseService.sum(),
+      ]);
+      const available = totalIncome - totalExpenses;
+      if (amount > available) {
+        res.status(400).json({ message: "Saldo insuficiente" });
         return;
       }
 
@@ -53,6 +64,28 @@ export class ExpenseController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const id = Number(req.params.id);
+      const existing = await expenseService.findById(id);
+      if (!existing) {
+        res.status(404).json({ message: "Gasto no encontrado" });
+        return;
+      }
+
+      const amount = req.body.amount ?? existing.amount;
+      if (typeof amount !== "number" || amount <= 0) {
+        res.status(400).json({ message: "amount debe ser un número positivo" });
+        return;
+      }
+
+      const [totalIncome, otherExpenses] = await Promise.all([
+        incomeService.sum(),
+        expenseService.sum(id),
+      ]);
+      const available = totalIncome - otherExpenses;
+      if (amount > available) {
+        res.status(400).json({ message: "Saldo insuficiente" });
+        return;
+      }
+
       const updated = await expenseService.update(id, req.body);
       if (!updated) {
         res.status(404).json({ message: "Gasto no encontrado" });

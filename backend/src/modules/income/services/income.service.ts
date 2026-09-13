@@ -9,6 +9,13 @@ import {
 } from "../models/income.model";
 
 export class IncomeService {
+  async sum(): Promise<number> {
+    const result = await pool.query<{ total: string }>(
+      `SELECT COALESCE(SUM(amount), 0) AS total FROM ingresos`
+    );
+    return Number(result.rows[0].total);
+  }
+
   async create(data: CreateIncomeDTO): Promise<Income> {
     const result = await pool.query<IncomeRow>(
       `INSERT INTO ingresos (amount, source, description, transaction_date)

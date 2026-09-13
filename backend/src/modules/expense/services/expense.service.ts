@@ -9,6 +9,18 @@ import {
 } from "../models/expense.model";
 
 export class ExpenseService {
+  async sum(excludeId?: number): Promise<number> {
+    const result = excludeId === undefined
+      ? await pool.query<{ total: string }>(
+          `SELECT COALESCE(SUM(amount), 0) AS total FROM expenses`
+        )
+      : await pool.query<{ total: string }>(
+          `SELECT COALESCE(SUM(amount), 0) AS total FROM expenses WHERE id <> $1`,
+          [excludeId]
+        );
+    return Number(result.rows[0].total);
+  }
+
   async create(data: CreateExpenseDTO): Promise<Expense> {
     const result = await pool.query<ExpenseRow>(
       `INSERT INTO expenses (amount, category, transaction_date)
