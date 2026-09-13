@@ -42,7 +42,7 @@
               <span class="source-badge">{{ income.source }}</span>
             </td>
             <td class="cell-desc">{{ income.description || '—' }}</td>
-            <td class="cell-amount">+{{ formatCurrency(income.amount) }}</td>
+            <td class="cell-amount">{{ formatCurrency(income.amount) }}</td>
             <td class="cell-actions">
               <button class="btn-action btn-edit" (click)="editIncome(income)" title="Editar">
                 ✎
