@@ -2,14 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
 import { Router, NavigationEnd } from '@angular/router';
 import { forkJoin, Subject, takeUntil, filter } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { SettingsService } from '../services/settings.service';
 import { IncomeService } from '../income/services/income.service';
 import { Income } from '../income/models/income.model';
-import { environment } from '../../environments/environment';
+import { ExpenseService } from '../expense/services/expense.service';
 
 interface KpiCard {
   title: string;
@@ -68,6 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   yearOptions: number[] = [];
   userName = 'Benjamin';
   userInitials = 'US';
+  userAvatar = '';
 
   kpis: KpiCard[] = [
     { title: 'Ingresos', amount: 0, color: '#00A3FF', icon: '' },
@@ -107,7 +107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private incomeService: IncomeService,
-    private http: HttpClient,
+    private expenseService: ExpenseService,
     private settingsService: SettingsService,
     private sanitizer: DomSanitizer
   ) {}
@@ -126,6 +126,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (user) {
       this.userName = user.nombre || 'Benjamin';
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
+      this.userAvatar = user.avatar || '';
     }
 
     this.loadDashboardData();
@@ -154,7 +155,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     forkJoin({
       incomes: this.incomeService.getAll(),
-      expenses: this.http.get<ExpenseRecord[]>(`${environment.apiUrl}/expenses`)
+      expenses: this.expenseService.getAll()
     }).subscribe({
       next: ({ incomes, expenses }) => {
         this.allIncomes = incomes;

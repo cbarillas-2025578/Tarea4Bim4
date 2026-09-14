@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { Subject, takeUntil } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { SettingsService } from "../services/settings.service";
 import { CategoryService } from "./services/category.service";
-import { environment } from "../../environments/environment";
+import { ExpenseService } from "../expense/services/expense.service";
 import {
   Category,
   CATEGORY_COLORS,
@@ -25,6 +24,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   userName = "Usuario";
   userInitials = "US";
+  userAvatar = "";
 
   categories: Category[] = [];
   loading = false;
@@ -61,7 +61,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private categoryService: CategoryService,
     private settingsService: SettingsService,
-    private http: HttpClient
+    private expenseService: ExpenseService
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +71,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     if (user) {
       this.userName = user.nombre || "Usuario";
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
+      this.userAvatar = user.avatar || "";
     }
 
     this.authService.currentUser$
@@ -79,6 +80,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         if (user) {
           this.userName = user.nombre || "Usuario";
           this.userInitials = this.userName.substring(0, 2).toUpperCase();
+          this.userAvatar = user.avatar || "";
         }
       });
 
@@ -110,7 +112,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   private loadUsage(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/expenses`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.expenseService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (expenses) => {
         const map: { [name: string]: { count: number; total: number } } = {};
         expenses.forEach((e) => {

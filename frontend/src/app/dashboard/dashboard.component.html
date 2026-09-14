@@ -8,7 +8,10 @@
       <div class="user-greeting">
         <div class="greeting-row">
           <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
-          <div class="user-avatar">{{ userInitials }}</div>
+          <div class="user-avatar">
+            <img *ngIf="userAvatar" [src]="userAvatar" alt="Foto de perfil">
+            <span *ngIf="!userAvatar">{{ userInitials }}</span>
+          </div>
         </div>
         <div class="month-selector">
           <button class="month-nav-btn" (click)="prevMonth()">‹</button>
