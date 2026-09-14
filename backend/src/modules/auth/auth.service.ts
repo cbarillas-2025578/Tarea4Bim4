@@ -1,7 +1,10 @@
 // backend/src/modules/auth/auth.service.ts
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { pool } from '../database/database';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || '');
 
 export class AuthService {
   async login(email: string, password: string) {
@@ -71,5 +74,65 @@ export class AuthService {
     } catch {
       throw new Error('Token inválido');
     }
+  }
+
+  async googleLogin(idToken: string) {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      throw new Error('Google login no configurado');
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: clientId,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      throw new Error('Token de Google inválido');
+    }
+
+    const email = payload.email;
+    const nombre = payload.name || email.split('@')[0] || 'Usuario';
+    const googleSub = payload.sub;
+
+    if (!googleSub) {
+      throw new Error('Token de Google inválido');
+    }
+
+    let userResult = await pool.query(
+      'SELECT * FROM usuarios WHERE email = $1 OR google_sub = $2',
+      [email, googleSub]
+    );
+    let user = userResult.rows[0];
+
+    if (!user) {
+      const insertResult = await pool.query(
+        `INSERT INTO usuarios (nombre, email, password, google_sub)
+         VALUES ($1, $2, NULL, $3) RETURNING *`,
+        [nombre, email, googleSub]
+      );
+      user = insertResult.rows[0];
+    } else if (!user.google_sub) {
+      await pool.query(
+        'UPDATE usuarios SET google_sub = $1 WHERE id = $2',
+        [googleSub, user.id]
+      );
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '20m' }
+    );
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        email: user.email
+      }
+    };
   }
 }

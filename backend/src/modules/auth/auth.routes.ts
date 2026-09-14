@@ -16,4 +16,7 @@ router.post("/register", (req, res) => authController.register(req, res));
 // POST /api/auth/refresh
 router.post("/refresh", (req, res) => authController.refresh(req, res));
 
+// POST /api/auth/google
+router.post("/google", (req, res) => authController.googleLogin(req, res));
+
 export default router;

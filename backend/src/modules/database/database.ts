@@ -18,10 +18,14 @@ export async function initDatabase(): Promise<void> {
       id SERIAL PRIMARY KEY,
       nombre VARCHAR(150) NOT NULL,
       email VARCHAR(200) NOT NULL UNIQUE,
-      password VARCHAR(255) NOT NULL,
+      password VARCHAR(255),
+      google_sub VARCHAR(200) UNIQUE,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS google_sub VARCHAR(200) UNIQUE");
+  await pool.query("ALTER TABLE usuarios ALTER COLUMN password DROP NOT NULL");
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS expenses (

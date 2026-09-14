@@ -36,4 +36,22 @@ export class AuthController {
       res.status(401).json({ message: 'Token inválido o expirado' });
     }
   }
+
+  async googleLogin(req: Request, res: Response) {
+    try {
+      const { idToken } = req.body;
+      if (!idToken) {
+        res.status(400).json({ message: 'idToken requerido' });
+        return;
+      }
+      const result = await this.authService.googleLogin(idToken);
+      res.json(result);
+    } catch (error: any) {
+      const message =
+        error?.message === 'Google login no configurado'
+          ? 'Google login no configurado en el servidor'
+          : 'No se pudo iniciar sesión con Google';
+      res.status(401).json({ message });
+    }
+  }
 }
