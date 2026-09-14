@@ -20,11 +20,13 @@ export async function initDatabase(): Promise<void> {
       email VARCHAR(200) NOT NULL UNIQUE,
       password VARCHAR(255),
       google_sub VARCHAR(200) UNIQUE,
+      avatar VARCHAR(500),
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
 
   await pool.query("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS google_sub VARCHAR(200) UNIQUE");
+  await pool.query("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS avatar VARCHAR(500)");
   await pool.query("ALTER TABLE usuarios ALTER COLUMN password DROP NOT NULL");
 
   await pool.query(`
@@ -33,9 +35,12 @@ export async function initDatabase(): Promise<void> {
       amount NUMERIC(12, 2) NOT NULL,
       category VARCHAR(100) NOT NULL,
       transaction_date TIMESTAMP NOT NULL,
+      user_id INTEGER NOT NULL DEFAULT 1,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS user_id INTEGER NOT NULL DEFAULT 1");
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS ingresos (
@@ -44,20 +49,28 @@ export async function initDatabase(): Promise<void> {
       source VARCHAR(100) NOT NULL,
       description VARCHAR(255) DEFAULT '',
       transaction_date TIMESTAMP NOT NULL,
+      user_id INTEGER NOT NULL DEFAULT 1,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
 
+  await pool.query("ALTER TABLE ingresos ADD COLUMN IF NOT EXISTS user_id INTEGER NOT NULL DEFAULT 1");
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS categorias (
       id SERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL UNIQUE,
+      name VARCHAR(100) NOT NULL,
       type VARCHAR(20) NOT NULL DEFAULT 'expense',
       color VARCHAR(20) NOT NULL DEFAULT '#38BDF8',
       icon VARCHAR(10) NOT NULL DEFAULT '📁',
+      user_id INTEGER NOT NULL DEFAULT 1,
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query("ALTER TABLE categorias ADD COLUMN IF NOT EXISTS user_id INTEGER NOT NULL DEFAULT 1");
+  await pool.query("ALTER TABLE categorias DROP CONSTRAINT IF EXISTS categorias_name_key");
+  await pool.query("CREATE UNIQUE INDEX IF NOT EXISTS uq_categorias_user_name ON categorias (user_id, name)");
 
   const defaultEmail = "Benjamin@gmail.com";
   const existing = await pool.query("SELECT id FROM usuarios WHERE email = $1", [defaultEmail]);
