@@ -1,0 +1,23 @@
+<div class="card">
+  <h2>Filtros</h2>
+  <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+    <label>
+      Mes
+      <select [(ngModel)]="selectedMonth" name="month">
+        <option [ngValue]="null">Todos</option>
+        <option *ngFor="let m of months" [ngValue]="m.value">{{ m.label }}</option>
+      </select>
+    </label>
+
+    <label>
+      Categoría
+      <select [(ngModel)]="selectedCategory" name="category">
+        <option value="">Todas</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </label>
+
+    <button class="btn-primary" (click)="applyFilters()">Buscar</button>
+    <button class="btn-secondary" (click)="clearFilters()">Limpiar</button>
+  </div>
+</div>

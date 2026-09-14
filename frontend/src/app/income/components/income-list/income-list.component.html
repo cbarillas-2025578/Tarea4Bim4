@@ -1,0 +1,65 @@
+<div class="income-container">
+  <app-income-form
+    [incomeToEdit]="incomeToEdit"
+    (saved)="onSaved()"
+    (cancelled)="cancelEdit()">
+  </app-income-form>
+
+  <app-income-filters (filtersChanged)="onFiltersChanged($event)"></app-income-filters>
+
+  <div class="income-table-card">
+    <div class="table-header">
+      <h3>Historial de ingresos</h3>
+      <div class="total-badge" *ngIf="incomes.length > 0">
+        <span class="total-label">Total</span>
+        <span class="total-amount">{{ formatCurrency(total) }}</span>
+      </div>
+    </div>
+
+    <p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <span>Cargando ingresos...</span>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!loading && incomes.length > 0">
+      <table class="income-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Fuente</th>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let income of incomes; let i = index" class="table-row"
+            [style.animation-delay]="(i * 0.05) + 's'">
+            <td class="cell-date">{{ income.transactionDate | date: "dd/MM/yyyy HH:mm" }}</td>
+            <td>
+              <span class="source-badge">{{ income.source }}</span>
+            </td>
+            <td class="cell-desc">{{ income.description || '—' }}</td>
+            <td class="cell-amount">{{ formatCurrency(income.amount) }}</td>
+            <td class="cell-actions">
+              <button class="btn-action btn-edit" (click)="editIncome(income)" title="Editar">
+                ✎
+              </button>
+              <button class="btn-action btn-delete" (click)="deleteIncome(income)" title="Eliminar">
+                ✕
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && incomes.length === 0">
+      <div class="empty-icon">📦</div>
+      <p class="empty-text">No hay ingresos registrados todavía</p>
+      <p class="empty-subtext">Registra tu primer ingreso usando el formulario de arriba</p>
+    </div>
+  </div>
+</div>

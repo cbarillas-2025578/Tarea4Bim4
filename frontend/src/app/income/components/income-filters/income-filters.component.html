@@ -1,0 +1,26 @@
+<div class="filters-card">
+  <div class="filters-header">
+    <span class="filters-icon">⚡</span>
+    <h3>Filtros</h3>
+  </div>
+  <div class="filters-body">
+    <div class="filter-group">
+      <label class="filter-label">Mes</label>
+      <select [(ngModel)]="selectedMonth" name="month" class="filter-select">
+        <option [ngValue]="null">Todos</option>
+        <option *ngFor="let m of months" [ngValue]="m.value">{{ m.label }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">Fuente</label>
+      <select [(ngModel)]="selectedSource" name="source" class="filter-select">
+        <option value="">Todas</option>
+        <option *ngFor="let src of sources" [value]="src">{{ src }}</option>
+      </select>
+    </div>
+
+    <button class="btn-filter" (click)="applyFilters()">Buscar</button>
+    <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
+  </div>
+</div>
