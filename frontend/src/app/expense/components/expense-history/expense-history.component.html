@@ -1,0 +1,46 @@
+<div class="container">
+  <app-expense-form
+    [expenseToEdit]="expenseToEdit"
+    (saved)="onSaved()"
+    (cancelled)="cancelEdit()">
+  </app-expense-form>
+
+  <app-expense-filters (filtersChanged)="onFiltersChanged($event)"></app-expense-filters>
+
+  <div class="card">
+    <h2>Historial de gastos</h2>
+
+    <p *ngIf="errorMessage" style="color: #dc2626;">{{ errorMessage }}</p>
+    <p *ngIf="loading">Cargando...</p>
+
+    <table *ngIf="!loading && expenses.length > 0">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Categoría</th>
+          <th>Monto</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let expense of expenses">
+          <td>{{ expense.transactionDate | date: "dd/MM/yyyy HH:mm" }}</td>
+          <td>{{ expense.category }}</td>
+          <td>Q{{ expense.amount.toFixed(2) }}</td>
+          <td style="display: flex; gap: 8px;">
+            <button class="btn-secondary" (click)="editExpense(expense)">Editar</button>
+            <button class="btn-danger" (click)="deleteExpense(expense)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><strong>Total</strong></td>
+          <td colspan="2"><strong>Q{{ total.toFixed(2) }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p *ngIf="!loading && expenses.length === 0">No hay gastos registrados todavía.</p>
+  </div>
+</div>

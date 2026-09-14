@@ -1,0 +1,107 @@
+<div class="login-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="particles">
+    <div class="particle" *ngFor="let p of [1,2,3,4,5,6,7,8]"></div>
+  </div>
+
+  <div class="login-card">
+    <div class="card-glow"></div>
+    <div class="card-border-glow"></div>
+
+    <div class="login-header">
+      <div class="login-icon">
+        <div class="logo-ring"></div>
+        <img *ngIf="logoUrl" [src]="logoUrl" alt="Logo" class="logo-img">
+        <span *ngIf="!logoUrl" class="logo-text">CG</span>
+      </div>
+      <h1 class="login-title">Control de Gastos</h1>
+      <p class="login-subtitle">Inicie sesión en su cuenta</p>
+    </div>
+
+    <div class="divider"><span class="divider-dot"></span></div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>
+          <span class="label-icon">✉</span> Email
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            formControlName="email" 
+            placeholder="su@email.com"
+            [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+          <div class="input-glow"></div>
+        </div>
+        <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Ingresa un email válido
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <span class="label-icon">🔒</span> Contraseña
+        </label>
+        <div class="input-wrapper">
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password" 
+            placeholder="••••••••"
+          >
+          <div class="input-glow"></div>
+          <button type="button" class="toggle-pass" (click)="showPassword = !showPassword">
+            {{ showPassword ? '👁' : '🔒' }}
+          </button>
+        </div>
+        <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Mínimo 6 caracteres
+        </small>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" formControlName="rememberMe">
+          <span class="checkmark"></span>
+          Recordarme
+        </label>
+        <a href="#" class="forgot-password">¿Olvidó su contraseña?</a>
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="isLoading">
+        <span *ngIf="!isLoading" class="btn-content">
+          <span>Iniciar Sesión</span>
+          <span class="btn-arrow">→</span>
+        </span>
+        <span *ngIf="isLoading" class="btn-content">
+          <span class="spinner"></span>
+          <span>Verificando...</span>
+        </span>
+        <div class="btn-shine"></div>
+      </button>
+
+      <div *ngIf="infoMessage" class="info-message">
+        <span class="info-icon">⏳</span> {{ infoMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        <span class="error-icon">⚠</span> {{ errorMessage }}
+      </div>
+    </form>
+
+    <div *ngIf="showGoogle" class="google-divider">
+      <span class="google-divider-line"></span>
+      <span class="google-divider-text">o continúa con</span>
+      <span class="google-divider-line"></span>
+    </div>
+
+    <div *ngIf="showGoogle" id="google-login-button" class="google-login-btn"></div>
+
+    <div class="card-footer">
+      <div class="footer-line"></div>
+      <p>Sistema de control financiero personal</p>
+    </div>
+  </div>
+</div>

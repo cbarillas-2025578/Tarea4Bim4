@@ -1,0 +1,38 @@
+<div class="app-layout" *ngIf="showSidebar; else loginView">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="sidebar-logo-icon">
+          <div class="logo-ring"></div>
+          <img src="assets/logo.png" alt="Logo" class="sidebar-logo-img">
+        </div>
+        <span class="brand-name">{{ t('app.brand') }}</span>
+      </div>
+
+      <nav class="nav-menu">
+        <button *ngFor="let item of menuItems"
+          class="nav-item"
+          [class.active]="item.active"
+          (click)="navigateTo(item.route)">
+          <span class="nav-icon" [innerHTML]="getIcon(item.icon)"></span>
+          <span class="nav-label">{{ t(item.labelKey) }}</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="nav-item logout-btn" (click)="logout()">
+        <span class="nav-icon" [innerHTML]="getIcon('logout')"></span>
+        <span class="nav-label">{{ t('nav.logout') }}</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<ng-template #loginView>
+  <router-outlet></router-outlet>
+</ng-template>

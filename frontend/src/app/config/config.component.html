@@ -1,0 +1,138 @@
+<div class="config-page">
+  <div class="config-header">
+    <div class="header-left">
+      <h1 class="view-title">{{ t('config.title') }}</h1>
+    </div>
+    <div class="header-right">
+      <div class="user-profile">
+        <span>{{ t('dash.greeting') }}<strong>{{ userName }}</strong></span>
+        <div class="user-avatar">
+          <img *ngIf="userAvatar" [src]="userAvatar" alt="Foto de perfil">
+          <span *ngIf="!userAvatar">{{ userInitials }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="error-msg" *ngIf="saveError">{{ saveError }}</p>
+
+  <div class="content-grid">
+    <div class="left-column">
+      <div class="card settings-card">
+        <div class="card-title-row">
+          <h3>{{ t('config.profile') }}</h3>
+        </div>
+        <div class="profile-row">
+          <div class="avatar-big">{{ userInitials }}</div>
+          <div class="profile-fields">
+            <div class="form-group">
+              <label class="form-label">{{ t('config.name') }}</label>
+              <input class="form-input" type="text" [(ngModel)]="userName" placeholder="Tu nombre" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ t('config.email') }}</label>
+              <input class="form-input" type="email" [(ngModel)]="userEmail" placeholder="tucorreo@ejemplo.com" />
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-save" (click)="saveProfile()">{{ t('config.saveProfile') }}</button>
+        </div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-title-row">
+          <h3>{{ t('config.preferences') }}</h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">{{ t('config.theme') }}</label>
+            <select class="form-input" [(ngModel)]="theme" (ngModelChange)="onThemeChange()">
+              <option value="dark">{{ t('config.dark') }}</option>
+              <option value="light">{{ t('config.light') }}</option>
+              <option value="system">{{ t('config.system') }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ t('config.currency') }}</label>
+            <select class="form-input" [(ngModel)]="currency" (ngModelChange)="onSettingsChange()">
+              <option value="Q">{{ t('config.currencyQuetzal') }}</option>
+              <option value="$">{{ t('config.currencyDollar') }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ t('config.language') }}</label>
+            <select class="form-input" [(ngModel)]="language" (ngModelChange)="onSettingsChange()">
+              <option value="es">{{ t('config.langSpanish') }}</option>
+              <option value="en">{{ t('config.langEnglish') }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-save" (click)="savePreferences()">{{ t('config.savePreferences') }}</button>
+        </div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-title-row">
+          <h3>{{ t('config.notifications') }}</h3>
+        </div>
+        <div class="toggle-list">
+          <div class="toggle-item">
+            <div class="toggle-text">
+              <span class="toggle-title">{{ t('config.emailNotif') }}</span>
+              <span class="toggle-desc">{{ t('config.emailNotifDesc') }}</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="notifyEmail" (ngModelChange)="onNotificationsChange()" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div class="toggle-text">
+              <span class="toggle-title">{{ t('config.pushNotif') }}</span>
+              <span class="toggle-desc">{{ t('config.pushNotifDesc') }}</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="notifyPush" (ngModelChange)="onNotificationsChange()" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div class="toggle-text">
+              <span class="toggle-title">{{ t('config.weeklyReport') }}</span>
+              <span class="toggle-desc">{{ t('config.weeklyReportDesc') }}</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="notifyWeekly" (ngModelChange)="onNotificationsChange()" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-save" (click)="saveNotifications()">{{ t('config.saveNotifications') }}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card danger-card">
+        <h3>{{ t('config.dangerZone') }}</h3>
+        <p>{{ t('config.dangerZoneDesc') }}</p>
+        <button class="btn-danger" (click)="resetSettings()">{{ t('config.reset') }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="savedMessage">
+    <div class="toast-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+    </div>
+    <div class="toast-body">
+      <strong class="toast-title">{{ t('config.saved') }}</strong>
+      <span class="toast-msg">{{ savedMessage }}</span>
+    </div>
+    <button class="toast-close" (click)="closeToast()" aria-label="Cerrar">&times;</button>
+    <span class="toast-progress"></span>
+  </div>
+</div>
