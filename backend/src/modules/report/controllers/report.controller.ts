@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { reportService } from "../services/report.service";
+import { AuthenticatedRequest } from "../../../middleware/auth.middleware";
 
 export class ReportController {
-  async getReport(req: Request, res: Response): Promise<void> {
+  async getReport(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const year = Number(req.params.year) || new Date().getFullYear();
       const month = req.params.month ? Number(req.params.month) : undefined;
@@ -12,7 +13,7 @@ export class ReportController {
         return;
       }
 
-      const report = await reportService.getReport(year, month);
+      const report = await reportService.getReport(year, month, req.userId);
       res.status(200).json(report);
     } catch (error) {
       res.status(500).json({ message: "Error al generar el reporte", error: String(error) });

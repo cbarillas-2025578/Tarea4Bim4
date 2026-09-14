@@ -13,23 +13,23 @@ const MONTH_LABELS = [
 ];
 
 export class ReportService {
-  async getReport(year: number, month?: number): Promise<ReportData> {
+  async getReport(year: number, month: number | undefined, userId: number): Promise<ReportData> {
     const [summary, monthly, expenseByCategory, incomeBySource] = await Promise.all([
-      this.getSummary(year, month),
-      this.getMonthly(year, month),
-      this.getExpenseByCategory(year, month),
-      this.getIncomeBySource(year, month),
+      this.getSummary(year, month, userId),
+      this.getMonthly(year, month, userId),
+      this.getExpenseByCategory(year, month, userId),
+      this.getIncomeBySource(year, month, userId),
     ]);
 
     return { year, month, summary, monthly, expenseByCategory, incomeBySource };
   }
 
-  private async getSummary(year: number, month?: number): Promise<ReportSummary> {
-    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1"];
-    const values: unknown[] = [year];
+  private async getSummary(year: number, month: number | undefined, userId: number): Promise<ReportSummary> {
+    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1", "user_id = $2"];
+    const values: unknown[] = [year, userId];
     if (month) {
       values.push(month);
-      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $2`);
+      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $${values.length}`);
     }
     const where = `WHERE ${conditions.join(" AND ")}`;
 
@@ -53,7 +53,7 @@ export class ReportService {
     };
   }
 
-  private async getMonthly(year: number, month?: number): Promise<MonthlyReportRow[]> {
+  private async getMonthly(year: number, month: number | undefined, userId: number): Promise<MonthlyReportRow[]> {
     const rows: MonthlyReportRow[] = MONTH_LABELS.map((label, i) => ({
       month: i + 1,
       label,
@@ -67,13 +67,13 @@ export class ReportService {
       const [inc, exp] = await Promise.all([
         pool.query(
           `SELECT COALESCE(SUM(amount), 0) AS total FROM ingresos
-           WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND EXTRACT(MONTH FROM transaction_date) = $2`,
-          [year, month]
+           WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND EXTRACT(MONTH FROM transaction_date) = $2 AND user_id = $3`,
+          [year, month, userId]
         ),
         pool.query(
           `SELECT COALESCE(SUM(amount), 0) AS total FROM expenses
-           WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND EXTRACT(MONTH FROM transaction_date) = $2`,
-          [year, month]
+           WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND EXTRACT(MONTH FROM transaction_date) = $2 AND user_id = $3`,
+          [year, month, userId]
         ),
       ]);
       single.income = Number(inc.rows[0].total);
@@ -85,13 +85,13 @@ export class ReportService {
     const [incResult, expResult] = await Promise.all([
       pool.query(
         `SELECT EXTRACT(MONTH FROM transaction_date)::int AS month, COALESCE(SUM(amount), 0) AS total
-         FROM ingresos WHERE EXTRACT(YEAR FROM transaction_date) = $1 GROUP BY month`,
-        [year]
+         FROM ingresos WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND user_id = $2 GROUP BY month`,
+        [year, userId]
       ),
       pool.query(
         `SELECT EXTRACT(MONTH FROM transaction_date)::int AS month, COALESCE(SUM(amount), 0) AS total
-         FROM expenses WHERE EXTRACT(YEAR FROM transaction_date) = $1 GROUP BY month`,
-        [year]
+         FROM expenses WHERE EXTRACT(YEAR FROM transaction_date) = $1 AND user_id = $2 GROUP BY month`,
+        [year, userId]
       ),
     ]);
 
@@ -111,12 +111,12 @@ export class ReportService {
     return rows;
   }
 
-  private async getExpenseByCategory(year: number, month?: number): Promise<CategoryReportRow[]> {
-    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1"];
-    const values: unknown[] = [year];
+  private async getExpenseByCategory(year: number, month: number | undefined, userId: number): Promise<CategoryReportRow[]> {
+    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1", "user_id = $2"];
+    const values: unknown[] = [year, userId];
     if (month) {
       values.push(month);
-      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $2`);
+      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $${values.length}`);
     }
     const where = `WHERE ${conditions.join(" AND ")}`;
 
@@ -135,12 +135,12 @@ export class ReportService {
     }));
   }
 
-  private async getIncomeBySource(year: number, month?: number): Promise<SourceReportRow[]> {
-    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1"];
-    const values: unknown[] = [year];
+  private async getIncomeBySource(year: number, month: number | undefined, userId: number): Promise<SourceReportRow[]> {
+    const conditions = ["EXTRACT(YEAR FROM transaction_date) = $1", "user_id = $2"];
+    const values: unknown[] = [year, userId];
     if (month) {
       values.push(month);
-      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $2`);
+      conditions.push(`EXTRACT(MONTH FROM transaction_date) = $${values.length}`);
     }
     const where = `WHERE ${conditions.join(" AND ")}`;
 
