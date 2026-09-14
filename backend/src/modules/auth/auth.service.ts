@@ -30,7 +30,8 @@ export class AuthService {
       user: { 
         id: user.id, 
         nombre: user.nombre, 
-        email: user.email 
+        email: user.email,
+        avatar: user.avatar || ''
       } 
     };
   }
@@ -38,9 +39,9 @@ export class AuthService {
   async register(userData: any) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const result = await pool.query(
-      `INSERT INTO usuarios (nombre, email, password) 
-       VALUES ($1, $2, $3) RETURNING *`,
-      [userData.nombre, userData.email, hashedPassword]
+      `INSERT INTO usuarios (nombre, email, password, avatar) 
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [userData.nombre, userData.email, hashedPassword, userData.avatar || '']
     );
     return result.rows[0];
   }
@@ -68,7 +69,8 @@ export class AuthService {
         user: {
           id: user.id,
           nombre: user.nombre,
-          email: user.email
+          email: user.email,
+          avatar: user.avatar || ''
         }
       };
     } catch {
@@ -108,15 +110,20 @@ export class AuthService {
 
     if (!user) {
       const insertResult = await pool.query(
-        `INSERT INTO usuarios (nombre, email, password, google_sub)
-         VALUES ($1, $2, NULL, $3) RETURNING *`,
-        [nombre, email, googleSub]
+        `INSERT INTO usuarios (nombre, email, password, google_sub, avatar)
+         VALUES ($1, $2, NULL, $3, $4) RETURNING *`,
+        [nombre, email, googleSub, payload.picture || '']
       );
       user = insertResult.rows[0];
     } else if (!user.google_sub) {
       await pool.query(
-        'UPDATE usuarios SET google_sub = $1 WHERE id = $2',
-        [googleSub, user.id]
+        'UPDATE usuarios SET google_sub = $1, avatar = $2 WHERE id = $3',
+        [googleSub, payload.picture || user.avatar || '', user.id]
+      );
+    } else {
+      await pool.query(
+        'UPDATE usuarios SET avatar = $1 WHERE id = $2',
+        [payload.picture || user.avatar || '', user.id]
       );
     }
 
@@ -131,7 +138,8 @@ export class AuthService {
       user: {
         id: user.id,
         nombre: user.nombre,
-        email: user.email
+        email: user.email,
+        avatar: user.avatar || ''
       }
     };
   }
