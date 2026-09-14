@@ -150,6 +150,16 @@ export class AuthService implements OnDestroy {
       );
   }
 
+  // Login con Google (recibe el ID token de Google Identity Services)
+  googleLogin(idToken: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/google`, { idToken })
+      .pipe(
+        tap(response => {
+          this.handleAuthResponse(response);
+        })
+      );
+  }
+
   // Registro
   register(userData: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);

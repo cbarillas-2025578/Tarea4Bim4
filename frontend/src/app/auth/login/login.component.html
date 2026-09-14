@@ -91,6 +91,14 @@
       </div>
     </form>
 
+    <div *ngIf="showGoogle" class="google-divider">
+      <span class="google-divider-line"></span>
+      <span class="google-divider-text">o continúa con</span>
+      <span class="google-divider-line"></span>
+    </div>
+
+    <div *ngIf="showGoogle" id="google-login-button" class="google-login-btn"></div>
+
     <div class="card-footer">
       <div class="footer-line"></div>
       <p>Sistema de control financiero personal</p>
