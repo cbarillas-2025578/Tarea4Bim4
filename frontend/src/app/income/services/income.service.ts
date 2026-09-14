@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { AuthService } from "../../services/auth.service";
 import {
   CreateIncomeDTO,
   Income,
@@ -15,7 +16,18 @@ import {
 export class IncomeService {
   private readonly baseUrl = `${environment.apiUrl}/incomes`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   getAll(filters: IncomeFilters = {}): Observable<Income[]> {
     let params = new HttpParams();
@@ -23,18 +35,18 @@ export class IncomeService {
     if (filters.year) params = params.set("year", filters.year);
     if (filters.source) params = params.set("source", filters.source);
 
-    return this.http.get<Income[]>(this.baseUrl, { params });
+    return this.http.get<Income[]>(this.baseUrl, { params, headers: this.getHeaders() });
   }
 
   create(income: CreateIncomeDTO): Observable<Income> {
-    return this.http.post<Income>(this.baseUrl, income);
+    return this.http.post<Income>(this.baseUrl, income, { headers: this.getHeaders() });
   }
 
   update(id: number, income: UpdateIncomeDTO): Observable<Income> {
-    return this.http.put<Income>(`${this.baseUrl}/${id}`, income);
+    return this.http.put<Income>(`${this.baseUrl}/${id}`, income, { headers: this.getHeaders() });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers: this.getHeaders() });
   }
 }
