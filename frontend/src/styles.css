@@ -465,6 +465,14 @@ body {
   letter-spacing: 0.5px;
   box-shadow: 0 0 10px var(--overlay-card);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 /* ─── Confirm dialog (modal compartido) ─── */

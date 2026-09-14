@@ -18,6 +18,7 @@ export class ReportComponent implements OnInit, OnDestroy {
 
   userName = "Usuario";
   userInitials = "US";
+  userAvatar = "";
 
   monthNames = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -73,6 +74,7 @@ export class ReportComponent implements OnInit, OnDestroy {
     if (user) {
       this.userName = user.nombre || "Usuario";
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
+      this.userAvatar = user.avatar || "";
     }
 
     this.authService.currentUser$
@@ -81,6 +83,7 @@ export class ReportComponent implements OnInit, OnDestroy {
         if (user) {
           this.userName = user.nombre || "Usuario";
           this.userInitials = this.userName.substring(0, 2).toUpperCase();
+          this.userAvatar = user.avatar || "";
         }
       });
 

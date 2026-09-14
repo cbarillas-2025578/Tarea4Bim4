@@ -11,6 +11,7 @@ export interface LoginResponse {
     id: number;
     nombre: string;
     email: string;
+    avatar?: string;
   };
 }
 
@@ -19,6 +20,7 @@ export interface User {
   nombre: string;
   email: string;
   password?: string;
+  avatar?: string;
 }
 
 @Injectable({

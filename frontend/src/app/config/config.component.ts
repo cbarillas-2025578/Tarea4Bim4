@@ -16,6 +16,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
   userName = "";
   userEmail = "";
   userInitials = "";
+  userAvatar = "";
 
   theme: ThemeOption = "dark";
   language: LanguageOption = "es";
@@ -41,6 +42,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
       this.userName = user.nombre || "";
       this.userEmail = user.email || "";
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
+      this.userAvatar = user.avatar || "";
     }
     this.loadSettings();
 

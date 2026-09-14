@@ -30,6 +30,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
   currentYear = 0;
   userName = "Usuario";
   userInitials = "US";
+  userAvatar = "";
   selectedPeriodMonthIdx = 0;
   selectedPeriodYear = 0;
 
@@ -85,6 +86,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
     if (user) {
       this.userName = user.nombre || "Usuario";
       this.userInitials = this.userName.substring(0, 2).toUpperCase();
+      this.userAvatar = user.avatar || "";
     }
 
     this.authService.currentUser$
@@ -93,6 +95,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
         if (user) {
           this.userName = user.nombre || "Usuario";
           this.userInitials = this.userName.substring(0, 2).toUpperCase();
+          this.userAvatar = user.avatar || "";
         }
       });
 
