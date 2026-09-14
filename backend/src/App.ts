@@ -5,6 +5,7 @@ import incomeRoutes from "./modules/income/routes/income.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import categoryRoutes from "./modules/category/routes/category.routes";
 import reportRoutes from "./modules/report/routes/report.routes";
+import { authenticate } from "./middleware/auth.middleware";
 
 export class App {
   public app: Application;
@@ -27,6 +28,9 @@ export class App {
 
     // Rutas de autenticación
     this.app.use("/api/auth", authRoutes);
+
+    // Rutas protegidas (requieren token JWT)
+    this.app.use("/api", authenticate);
 
     // Rutas del módulo de gastos (expense)
     this.app.use("/api/expenses", expenseRoutes);
