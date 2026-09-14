@@ -4,7 +4,9 @@ Aplicación full-stack para el control de finanzas personales con autenticación
 
 ## Características
 
-- **Autenticación**: Registro, login, refresh de token automático y protección de rutas (JWT + Guards)
+- **Autenticación**: Registro, login, login con Google (OAuth 2.0), refresh de token automático y protección de rutas (JWT + Guards)
+- **Cuentas por usuario**: Cada usuario tiene sus propios datos aislados (gastos, ingresos y categorías se filtran por el usuario autenticado)
+- **Foto de perfil**: Se sincroniza automáticamente la foto de la cuenta de Google en las cabeceras de la app
 - **Dashboard**: Resumen de ingresos, gastos, balance, curvas de evolución mensual y presupuesto editable
 - **Ingresos**: CRUD completo y filtros por mes y fuente
 - **Gastos**: CRUD completo y filtros por mes y categoría
@@ -20,8 +22,9 @@ Aplicación full-stack para el control de finanzas personales con autenticación
 Tarea2Bim4/
 ├── backend/                          # API Node.js + Express + TypeScript + PostgreSQL (pg)
 │   └── src/
+│       ├── middleware/               # Autenticación JWT (Bearer token)
 │       ├── modules/
-│       │   ├── auth/                 # Autenticación (registro, login, refresh, JWT)
+│       │   ├── auth/                 # Autenticación (registro, login, Google, refresh, JWT)
 │       │   ├── database/             # Pool de conexión y creación de tablas (SQL)
 │       │   ├── income/               # Módulo de ingresos
 │       │   │   ├── controllers/
@@ -62,6 +65,7 @@ npm run dev            # http://localhost:3000
 **Auth:**
 - `POST /api/auth/login` — `{ email, password }` → retorna JWT
 - `POST /api/auth/register` — `{ nombre, email, password }`
+- `POST /api/auth/google` — `{ code }` → auth con Google (registra o inicia sesión y guarda la foto de perfil)
 - `POST /api/auth/refresh` — renueva el token
 
 **Gastos (requieren Bearer Token):**
@@ -98,8 +102,9 @@ npm start   # http://localhost:4200
 ```
 
 - Configura la API en `src/environments/environment.ts` (`http://localhost:3000/api` por defecto)
+- Configura `googleClientId` en `src/environments/environment.ts` y `environment.prod.ts` con el Client ID de Google para activar el botón de login
 - Rutas protegidas con `AuthGuard`
-- El token se adjunta automáticamente y se refresca antes de expirar
+- El token se adjunta automáticamente en todas las peticiones a la API y se refresca antes de expirar
 
 ## Variables de Entorno (Backend)
 
@@ -112,17 +117,18 @@ DB_USER=postgres
 DB_PASSWORD=admin
 JWT_SECRET=tu_secreto_jwt
 JWT_EXPIRES_IN=24h
+GOOGLE_CLIENT_ID=tu_client_id_de_google.apps.googleusercontent.com
 ```
 
-> El backend usa valores por defecto si falta alguna variable. `JWT_SECRET` y `JWT_EXPIRES_IN` solo se leen si están definidas.
+> El backend usa valores por defecto si falta alguna variable. `JWT_SECRET` y `JWT_EXPIRES_IN` solo se leen si están definidas. `GOOGLE_CLIENT_ID` es opcional: sin ella el login con Google devuelve un error al intentar usarlo.
 
 ## Base de Datos
 
 Las tablas se crean automáticamente al iniciar el backend:
-- `usuarios` — usuarios registrados (se crea por defecto `Benjamin@gmail.com` / `Benjamin34gt`)
-- `ingresos` — transacciones de ingresos
-- `expenses` — transacciones de gastos
-- `categorias` — categorías de gastos e ingresos
+- `usuarios` — usuarios registrados (se crea por defecto `Benjamin@gmail.com` / `Benjamin34gt`); guarda `google_sub` y `avatar`
+- `ingresos` — transacciones de ingresos (aisladas por `user_id`)
+- `expenses` — transacciones de gastos (aisladas por `user_id`)
+- `categorias` — categorías de gastos e ingresos (aisladas por `user_id`; nombre único por usuario)
 
 ## Notas
 
